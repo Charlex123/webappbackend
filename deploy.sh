@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Deleting old app"
-sudo rm -rf /var/www/
+sudo rm -rf /var/www/flaskapp
 
 echo "Creating app folder"
 sudo mkdir -p /var/www/flaskapp
@@ -19,7 +19,7 @@ sudo yum install -y python3 python3-pip
 
 # Install application dependencies from requirements.txt
 echo "Install application dependencies from requirements.txt"
-sudo pip3 install -r requirements.txt
+sudo /usr/bin/python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Update and install Nginx if not already installed
 if ! command -v nginx > /dev/null; then
@@ -53,7 +53,7 @@ sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:flaskapp.sock server:app --user ec2-user --group ec2-user --daemon
+sudo /var/www/flaskapp/venv/bin/gunicorn --workers 3 --bind unix:flaskapp.sock server:app --user ec2-user --group ec2-user --daemon
 echo "Started Gunicorn 🚀"
 
 # Install Certbot and obtain SSL certificate
