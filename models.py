@@ -1,0 +1,33 @@
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timezone
+
+db = SQLAlchemy()
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.Integer, unique=True, nullable=False)
+    level = db.Column(db.String(80), default='starter', nullable=False)
+    levelpoint = db.Column(db.Integer, default=0)
+    exchange = db.Column(db.String(180), default='Binance')
+    multiplier = db.Column(db.Integer, default=5)
+    dailypoints = db.Column(db.Integer, default=5000)
+    dailypointscounter = db.Column(db.Integer, default=5000)
+    ref_count = db.Column(db.Integer, default=0)
+    totalpoints = db.Column(db.Integer, default=5000)
+    referral_link = db.Column(db.String(250), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+
+class Referral(db.Model):
+    __tablename__ = 'referrals'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    referred_chat_id = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    
+class Testnet(db.Model):
+    __tablename__ = 'testnet'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))

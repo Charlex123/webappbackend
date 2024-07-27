@@ -1,0 +1,10 @@
+pyTelegramBotAPI
+flask
+python-dotenv
+Flask-SQLAlchemy
+psycopg2-binary
+Flask-CORS
+telegram
+requests
+python-telegram-bot
+charset-normalizer
