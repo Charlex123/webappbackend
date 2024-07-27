@@ -76,6 +76,14 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
+    - name: Create directory on EC2 instance if not exists 🚀
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          if [ ! -d /home/${{ secrets.EC2_USER }}/flaskapp ]; then
+            mkdir -p /home/${{ secrets.EC2_USER }}/flaskapp
+          fi
+        EOF
+
     - name: Copy application files to EC2 instance 🚙
       run: |
         scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/flaskapp
