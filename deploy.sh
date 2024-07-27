@@ -1,20 +1,20 @@
 #!/bin/bash
 
-echo "deleting old app"
+echo "Deleting old app"
 sudo rm -rf /var/www/
 
-echo "creating app folder"
-sudo mkdir -p /var/www/langchain-app 
+echo "Creating app folder"
+sudo mkdir -p /var/www/flaskapp
 
-echo "moving files to app folder"
-sudo mv * /var/www/langchain-app
+echo "Moving files to app folder"
+sudo cp -r /home/ec2-user/flaskapp/* /var/www/flaskapp
 
 # Navigate to the app directory
-cd /var/www/langchain-app/
-sudo mv env .env
+cd /var/www/flaskapp/
+sudo cp /home/ec2-user/flaskapp/.env .env
 
 sudo yum update -y
-echo "installing python and pip"
+echo "Installing Python and pip"
 sudo yum install -y python3 python3-pip
 
 # Install application dependencies from requirements.txt
@@ -28,16 +28,16 @@ if ! command -v nginx > /dev/null; then
 fi
 
 # Configure Nginx to act as a reverse proxy if not already configured
-if [ ! -f /etc/nginx/sites-available/myapp ]; then
-    sudo rm -f /etc/nginx/sites-enabled/default
-    sudo bash -c 'cat > /etc/nginx/conf.d/myapp.conf <<EOF
+if [ ! -f /etc/nginx/conf.d/flaskapp.conf ]; then
+    sudo rm -f /etc/nginx/nginx.conf
+    sudo bash -c 'cat > /etc/nginx/nginx.conf <<EOF
 server {
     listen 80;
-    server_name _;
+    server_name webappbackend.fifareward.io;
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/var/www/langchain-app/myapp.sock;
+        proxy_pass http://unix:/var/www/flaskapp/flaskapp.sock;
     }
 }
 EOF'
@@ -49,9 +49,23 @@ fi
 
 # Stop any existing Gunicorn process
 sudo pkill gunicorn
-sudo rm -rf myapp.sock
+sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application
-echo "starting gunicorn"
-sudo gunicorn --workers 3 --bind unix:myapp.sock server:app --user ec2-user --group ec2-user --daemon
-echo "started gunicorn 🚀"
+echo "Starting Gunicorn"
+sudo gunicorn --workers 3 --bind unix:flaskapp.sock server:app --user ec2-user --group ec2-user --daemon
+echo "Started Gunicorn 🚀"
+
+# Install Certbot and obtain SSL certificate
+if ! command -v certbot > /dev/null; then
+    echo "Installing Certbot"
+    sudo yum install -y certbot python3-certbot-nginx
+fi
+
+echo "Obtaining SSL certificate with Certbot"
+sudo certbot --nginx --non-interactive --agree-tos --email fifarewarddapp@gmail.com -d webappbackend.fifareward.io
+
+echo "Reloading Nginx with SSL configuration"
+sudo systemctl reload nginx
+
+echo "Deployment completed 🚀"
