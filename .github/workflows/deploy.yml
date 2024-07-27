@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      db:
+      postgres:
         image: postgres:15
         env:
           POSTGRES_USER: postgres
@@ -43,18 +43,13 @@ jobs:
 
     - name: Wait for PostgreSQL to be ready
       run: |
-        while ! pg_isready -h db -p 5432 -U postgres; do
+        while ! pg_isready -h localhost -p 5432 -U postgres; do
           sleep 1
         done
 
-    - name: Set up database
-      run: |
-        export PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-        psql -h db -U postgres -d postgres -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT NOT NULL);"
-
     - name: Test
       run: |
-        export DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}
+        export DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
         pytest
 
     - name: Set up Docker Buildx
@@ -89,4 +84,4 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
           docker stop flaskapp || true
           docker rm flaskapp || true
-          docker run -d -p 80:80 --name flaskapp --env DATABASE_URL=postgresql://postgres:postgres01@db:5432/postgres ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
+          docker run -d -p 80:80 --name flaskapp --env DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@:5432/${{ secrets.POSTGRES_USER }} ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
