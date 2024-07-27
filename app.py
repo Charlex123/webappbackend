@@ -14,11 +14,9 @@ logger = logging.getLogger(__name__)
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
-# DATABASE_URL = os.getenv('DATABASE_URL')
-# BOT_TOKEN = os.getenv('BOT_TOKEN')
+DATABASE_URL = os.getenv('DATABASE_URL')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
-BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
-DATABASE_URL = "postgresql://postgres:postgres@db:5432/postgres"
 
 if not DATABASE_URL or not BOT_TOKEN:
     raise ValueError("DATABASE_URL or BOT_TOKEN environment variables not set.")

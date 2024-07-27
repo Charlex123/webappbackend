@@ -31,3 +31,35 @@ class Testnet(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     points = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+
+class Blockchains(db.Model):
+    __tablename__ = 'blockchains'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(120), nullable=False)
+    symbol = db.Column(db.String(60), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    
+class Clubs(db.Model):
+    __tablename__ = 'clubs'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(120), nullable=False)
+    symbol = db.Column(db.String(60), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    
+class Managers(db.Model):
+    __tablename__ = 'managers'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(120), nullable=False)
+    symbol = db.Column(db.String(60), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+
+class Country(db.Model):
+    __tablename__ = 'country'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(120), nullable=False)
+    symbol = db.Column(db.String(60), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
