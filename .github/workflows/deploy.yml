@@ -69,14 +69,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up SSH key and whitelist EC2 IP address 🐻‍❄️
+    - name: Set up SSH key and whitelist EC2 IP address
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Create directory on EC2 instance if not exists 🚀
+    - name: Create directory on EC2 instance if not exists
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           if [ ! -d /home/${{ secrets.EC2_USER }}/flaskapp ]; then
@@ -84,37 +84,30 @@ jobs:
           fi
         EOF
 
-    - name: Create .gitignore to exclude venv and other unnecessary files 🧨
+    - name: Create .gitignore to exclude venv and other unnecessary files
       run: |
         echo "venv/" > .gitignore
         echo ".git/" >> .gitignore
         echo "node_modules/" >> .gitignore
         echo ".github/" >> .gitignore
         echo "Dockerfile" >> .gitignore
-        echo "deploy.sh" >> .gitignore
 
-    - name: Copy application files to EC2 instance 🚙
+    - name: Copy application files to EC2 instance
       run: |
         rsync -av --exclude-from='.gitignore' . ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/flaskapp
 
-    - name: Run deployment script on EC2 🚀
+    - name: Copy deploy.sh to EC2 instance
+      run: |
+        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no deploy.sh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/flaskapp
+
+    - name: Run deployment script on EC2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          # Update package list and install Docker if not already installed
-          sudo yum update -y
-          sudo yum install -y docker
-          sudo service docker start
-
-          # Navigate to the application directory
           cd /home/${{ secrets.EC2_USER }}/flaskapp
-
-          # Pull, stop, remove, and run Docker container
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
-          sudo docker stop flaskapp || true
-          sudo docker rm flaskapp || true
-          sudo docker run -d -p 80:80 --name flaskapp --env DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_USER }} ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
+          chmod +x deploy.sh
+          ./deploy.sh
         EOF
 
-    - name: Clean up SSH key 🚀
+    - name: Clean up SSH key
       if: always()
       run: rm -f ~/.ssh/id_rsa
