@@ -78,11 +78,11 @@ jobs:
 
     - name: Copy files to remote server
       run: |
-        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/flaskapp
+        rsync -av --exclude='venv' ./* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/flaskapp
 
     - name: Run deploy script on EC2
       run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/ec2-user/flaskapp/deploy.sh && /home/ec2-user/flaskapp/deploy.sh"
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh && /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh"
 
     - name: Clean up SSH key
       if: always()

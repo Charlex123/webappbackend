@@ -17,9 +17,11 @@ sudo yum update -y
 echo "Installing Python and pip"
 sudo yum install -y python3 python3-pip
 
-# Install application dependencies from requirements.txt
-echo "Install application dependencies from requirements.txt"
-sudo /usr/bin/python3 -m pip install --no-cache-dir -r requirements.txt
+# Create a virtual environment and install dependencies
+echo "Creating virtual environment and installing dependencies"
+python3 -m venv venv
+source venv/bin/activate
+pip install --no-cache-dir -r requirements.txt
 
 # Update and install Nginx if not already installed
 if ! command -v nginx > /dev/null; then
