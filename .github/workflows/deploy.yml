@@ -4,22 +4,26 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: 
+      - main 
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
+      db:
+        container_name: db
         image: postgres:15
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres01
-          POSTGRES_DB: postgres
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U postgres"
+          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -40,18 +44,18 @@ jobs:
 
     - name: Wait for PostgreSQL to be ready
       run: |
-        while ! pg_isready -h localhost -p 5432 -U postgres; do
+        while ! pg_isready -h db -p 5432 -U ${{ secrets.POSTGRES_USER }}; do
           sleep 1
         done
 
     - name: Set up database
       run: |
-        export PGPASSWORD=postgres01
-        psql -h localhost -U postgres -d postgres -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT NOT NULL);"
+        export PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+        psql -h db -U postgres -d postgres -c "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT NOT NULL);"
 
     - name: Test
       run: |
-        export DATABASE_URL=postgresql://postgres:postgres01@localhost:5432/postgres
+        export DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}
         pytest
 
     - name: Set up Docker Buildx
@@ -86,4 +90,4 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
           docker stop flaskapp || true
           docker rm flaskapp || true
-          docker run -d -p 80:80 --name flaskapp --env DATABASE_URL=postgresql://postgres:postgres01@localhost:5432/postgres ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
+          docker run -d -p 80:80 --name flaskapp --env DATABASE_URL=postgresql://postgres:postgres01@db:5432/postgres ${{ secrets.DOCKER_USERNAME }}/flaskapp:latest
