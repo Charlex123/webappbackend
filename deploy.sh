@@ -46,7 +46,7 @@ sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user www-
 echo "Started Gunicorn 🚀"
 
 # Create Nginx reverse proxy configuration
-NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
+NGINX_CONF="/etc/nginx/conf.d/"
 sudo bash -c "cat > $NGINX_CONF <<EOF
 server {
     listen 80;
