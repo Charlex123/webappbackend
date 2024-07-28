@@ -338,9 +338,12 @@ def add_user_route():
         'referral_link': new_user.referral_link
     }), 201
 
+@app.route('/')
+def index():
+    return "Welcome to the Web App API!"
 # Ensure application context and create database tables
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4000)
+    app.run()
