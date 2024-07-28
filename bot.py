@@ -11,11 +11,16 @@ import requests
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
-env_path = Path('.') / '.env'
-load_dotenv(dotenv_path=env_path)
+load_dotenv()
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+# DATABASE_URL = os.getenv('DATABASE_URL')
+# BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+DATABASE_URL = "postgresql://postgres:postgres01@localhost:5432/postgres"
+BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
+
+print(f"BOT_TOKEN: {BOT_TOKEN}")
+print(f"DATABASE_URL: {DATABASE_URL}")
 
 if not BOT_TOKEN or not DATABASE_URL:
     raise ValueError("BOT_TOKEN or DATABASE_URL environment variables not set.")
