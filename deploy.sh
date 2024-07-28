@@ -17,16 +17,14 @@ sudo yum update -y
 echo "Installing Python and pip"
 sudo yum install -y python3 python3-pip
 
-# Create a virtual environment and install dependencies
-echo "Creating virtual environment and installing dependencies"
-python3 -m venv venv
-source venv/bin/activate
-pip install --no-cache-dir -r requirements.txt
+# Install application dependencies from requirements.txt
+echo "Install application dependencies from requirements.txt"
+sudo pip install -r requirements.txt
 
 # Update and install Nginx if not already installed
 if ! command -v nginx > /dev/null; then
     echo "Installing Nginx"
-    sudo amazon-linux-extras install nginx1.12 -y
+    sudo yum install -y nginx
 fi
 
 # Configure Nginx to act as a reverse proxy if not already configured
@@ -55,7 +53,7 @@ sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application
 echo "Starting Gunicorn"
-sudo /var/www/flaskapp/venv/bin/gunicorn --workers 3 --bind unix:flaskapp.sock server:app --user ec2-user --group ec2-user --daemon
+sudo gunicorn --workers 3 --bind unix:flaskapp.sock  app:app --user www-data --group www-data --daemon
 echo "Started Gunicorn 🚀"
 
 # Install Certbot and obtain SSL certificate
