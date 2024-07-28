@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-DATABASE_URL = "postgresql://postgres:postgres01@localhost:5432/postgres"
-BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
+DATABASE_URL = os.getenv('DATABASE_URL')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 print(f"BOT_TOKEN: {BOT_TOKEN}")
 print(f"DATABASE_URL: {DATABASE_URL}")
