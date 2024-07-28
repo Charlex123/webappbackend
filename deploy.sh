@@ -2,7 +2,7 @@
 
 APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
-DOMAIN="webappbackend.fifareward.io"
+DOMAIN="54.196.174.228"
 EMAIL="fifarewarddapp@gmail.com"
 
 echo "Deleting old app"
@@ -44,6 +44,28 @@ sudo rm -rf flaskapp.sock
 echo "Starting Gunicorn"
 sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user www-data --group www-data --daemon
 echo "Started Gunicorn 🚀"
+
+# Create Nginx reverse proxy configuration
+NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
+sudo bash -c "cat > $NGINX_CONF <<EOF
+server {
+    listen 80;
+    server_name $DOMAIN;
+
+    location / {
+        proxy_pass http://unix:$APP_DIR/flaskapp.sock;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \\\$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \\\$host;
+        proxy_cache_bypass \\\$http_upgrade;
+    }
+}
+EOF"
+
+# Restart Nginx to apply the new configuration
+echo "Restarting Nginx"
+sudo systemctl restart nginx
 
 # Install Certbot and obtain SSL certificate
 if ! command -v certbot > /dev/null; then
