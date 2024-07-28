@@ -1,25 +1,31 @@
 #!/bin/bash
 
+APP_DIR="/var/www/flaskapp"
+EC2_USER_DIR="/home/ec2-user/flaskapp"
+NGINX_CONF="/etc/nginx/nginx.conf"
+DOMAIN="webappbackend.fifareward.io"
+EMAIL="fifarewarddapp@gmail.com"
+
 echo "Deleting old app"
-sudo rm -rf /var/www/flaskapp
+sudo rm -rf $APP_DIR
 
 echo "Creating app folder"
-sudo mkdir -p /var/www/flaskapp
+sudo mkdir -p $APP_DIR
 
 echo "Moving files to app folder"
-sudo cp -r /home/ec2-user/flaskapp/* /var/www/flaskapp
+sudo cp -r $EC2_USER_DIR/* $APP_DIR
 
 # Navigate to the app directory
-cd /var/www/flaskapp/
-sudo cp /home/ec2-user/flaskapp/.env .env
+cd $APP_DIR
+sudo cp $EC2_USER_DIR/.env .env
 
 sudo yum update -y
 echo "Installing Python and pip"
 sudo yum install -y python3 python3-pip
 
 # Install application dependencies from requirements.txt
-echo "Install application dependencies from requirements.txt"
-sudo pip install -r requirements.txt
+echo "Installing application dependencies from requirements.txt"
+sudo pip3 install -r requirements.txt
 
 # Update and install Nginx if not already installed
 if ! command -v nginx > /dev/null; then
@@ -29,18 +35,22 @@ fi
 
 # Configure Nginx to act as a reverse proxy if not already configured
 if [ ! -f /etc/nginx/conf.d/flaskapp.conf ]; then
-    sudo rm -f /etc/nginx/nginx.conf
-    sudo bash -c 'cat > /etc/nginx/nginx.conf <<EOF
+    sudo rm -f $NGINX_CONF
+    sudo bash -c "cat > $NGINX_CONF <<EOF
 server {
     listen 80;
-    server_name webappbackend.fifareward.io;
+    server_name $DOMAIN;
 
     location / {
-        include proxy_params;
-        proxy_pass http://unix:/var/www/flaskapp/flaskapp.sock;
+        proxy_pass http://unix:$APP_DIR/flaskapp.sock;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \\\$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \\\$host;
+        proxy_cache_bypass \\\$http_upgrade;
     }
 }
-EOF'
+EOF"
 
     sudo systemctl restart nginx
 else
@@ -53,7 +63,7 @@ sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:flaskapp.sock  app:app --user www-data --group www-data --daemon
+sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user www-data --group www-data --daemon
 echo "Started Gunicorn 🚀"
 
 # Install Certbot and obtain SSL certificate
@@ -63,7 +73,7 @@ if ! command -v certbot > /dev/null; then
 fi
 
 echo "Obtaining SSL certificate with Certbot"
-sudo certbot --nginx --non-interactive --agree-tos --email fifarewarddapp@gmail.com -d webappbackend.fifareward.io
+sudo certbot --nginx --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
 
 echo "Reloading Nginx with SSL configuration"
 sudo systemctl reload nginx
