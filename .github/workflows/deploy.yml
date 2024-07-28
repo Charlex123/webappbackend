@@ -73,7 +73,10 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Verify SSH key
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'"
 
       - name: Create .env file dynamically 🧨
         env:
@@ -88,14 +91,14 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
         run: |
-          scp -r * ${{ secrets.EC2_USERNAME }}@$EC2_HOST:/home/${{ secrets.EC2_USERNAME }}/flaskapp
+          scp -i ~/.ssh/id_rsa -r * $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/flaskapp
 
-      - name: Run Bash Script To Delpoy App 🚀
+      - name: Run Bash Script To Deploy App 🚀
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "chmod +x ./deploy.sh && ./deploy.sh"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "chmod +x /home/$EC2_USERNAME/flaskapp/deploy.sh && /home/$EC2_USERNAME/flaskapp/deploy.sh"
 
       - name: Clean up SSH key 🚀
         if: always()
