@@ -33,9 +33,8 @@ if ! command -v nginx > /dev/null; then
     sudo yum install -y nginx
 fi
 
-# Configure Nginx to act as a reverse proxy if not already configured
-if [ ! -f /etc/nginx/conf.d/flaskapp.conf ]; then
-    sudo bash -c "cat > $NGINX_CONF <<EOF
+# Configure Nginx to act as a reverse proxy
+sudo bash -c "cat > $NGINX_CONF <<EOF
 user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log;
@@ -79,10 +78,7 @@ http {
 }
 EOF"
 
-    sudo systemctl restart nginx
-else
-    echo "Nginx reverse proxy configuration already exists."
-fi
+sudo systemctl restart nginx
 
 # Stop any existing Gunicorn process
 sudo pkill gunicorn
