@@ -2,7 +2,7 @@
 
 APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
-DOMAIN="54.196.174.228"
+DOMAIN="webappbackend.fifarewrd.io"
 EMAIL="fifarewarddapp@gmail.com"
 
 echo "Deleting old app"
@@ -45,8 +45,12 @@ echo "Starting Gunicorn"
 sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user www-data --group www-data --daemon
 echo "Started Gunicorn 🚀"
 
+# Start the bot script
+echo "Starting bot.py"
+nohup python3 bot.py &
+
 # Create Nginx reverse proxy configuration
-NGINX_CONF="/etc/nginx/conf.d/"
+NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
 sudo bash -c "cat > $NGINX_CONF <<EOF
 server {
     listen 80;
