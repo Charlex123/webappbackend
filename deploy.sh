@@ -33,29 +33,52 @@ if ! command -v nginx > /dev/null; then
     sudo yum install -y nginx
 fi
 
-# Configure Nginx to act as a reverse proxy if not already configured
-if [ ! -f /etc/nginx/conf.d/flaskapp.conf ]; then
-    sudo rm -f $NGINX_CONF
-    sudo bash -c "cat > $NGINX_CONF <<EOF
-server {
-    listen 80;
-    server_name $DOMAIN;
+# Configure Nginx to act as a reverse proxy
+sudo bash -c "cat > $NGINX_CONF <<EOF
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
 
-    location / {
-        proxy_pass http://54.196.174.228:80;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                      '\$status \$body_bytes_sent "\$http_referer" '
+                      '"\$http_user_agent" "\$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    include /etc/nginx/conf.d/*.conf;
+
+    server {
+        listen 80;
+        server_name $DOMAIN;
+
+        location / {
+            proxy_pass http://unix:$APP_DIR/flaskapp.sock;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host \$host;
+            proxy_cache_bypass \$http_upgrade;
+        }
     }
 }
 EOF"
 
-    sudo systemctl restart nginx
-else
-    echo "Nginx reverse proxy configuration already exists."
-fi
+sudo systemctl restart nginx
 
 # Stop any existing Gunicorn process
 sudo pkill gunicorn
