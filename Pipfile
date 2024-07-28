@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyTelegramBotAPI
+flask
+python-dotenv
+Flask-SQLAlchemy
+psycopg2-binary
+Flask-CORS
+telegram
+requests
+python-telegram-bot
+charset-normalizer
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
