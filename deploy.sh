@@ -2,7 +2,6 @@
 
 APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
-NGINX_CONF="/etc/nginx/nginx.conf"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
@@ -27,35 +26,15 @@ sudo yum install -y python3 python3-pip
 echo "Installing application dependencies from requirements.txt"
 sudo pip3 install -r requirements.txt
 
-# Update and install Nginx if not already installed
-if ! command -v nginx > /dev/null; then
-    echo "Installing Nginx"
-    sudo yum install -y nginx
+# Uninstall Nginx if it is already installed
+if command -v nginx > /dev/null; then
+    echo "Uninstalling Nginx"
+    sudo yum remove -y nginx
 fi
 
-# Configure Nginx to act as a reverse proxy if not already configured
-if [ ! -f /etc/nginx/conf.d/flaskapp.conf ]; then
-    sudo rm -f $NGINX_CONF
-    sudo bash -c "cat > $NGINX_CONF <<EOF
-server {
-    listen 80;
-    server_name $DOMAIN;
-
-    location / {
-        proxy_pass http://54.196.174.228:80;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-EOF"
-
-    sudo systemctl restart nginx
-else
-    echo "Nginx reverse proxy configuration already exists."
-fi
+# Install Nginx
+echo "Installing Nginx"
+sudo yum install -y nginx
 
 # Stop any existing Gunicorn process
 sudo pkill gunicorn
