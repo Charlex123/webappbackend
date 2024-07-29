@@ -73,20 +73,27 @@ server {
 }
 EOF"
 
-# Restart Nginx to apply the new configuration
-echo "Restarting Nginx"
-sudo systemctl restart nginx
+# Test Nginx configuration before restarting
+echo "Testing Nginx configuration"
+sudo nginx -t
 
-# Install Certbot and obtain SSL certificate
-if ! command -v certbot > /dev/null; then
-    echo "Installing Certbot"
-    sudo yum install -y certbot python3-certbot-nginx
+if [ $? -eq 0 ]; then
+    echo "Restarting Nginx"
+    sudo systemctl restart nginx
+
+    # Install Certbot and obtain SSL certificate
+    if ! command -v certbot > /dev/null; then
+        echo "Installing Certbot"
+        sudo yum install -y certbot python3-certbot-nginx
+    fi
+
+    echo "Obtaining SSL certificate with Certbot"
+    sudo certbot --nginx --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
+
+    echo "Reloading Nginx with SSL configuration"
+    sudo systemctl reload nginx
+
+    echo "Deployment completed 🚀"
+else
+    echo "Nginx configuration test failed, not restarting Nginx"
 fi
-
-echo "Obtaining SSL certificate with Certbot"
-sudo certbot --nginx --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
-
-echo "Reloading Nginx with SSL configuration"
-sudo systemctl reload nginx
-
-echo "Deployment completed 🚀"
