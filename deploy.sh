@@ -87,17 +87,24 @@ if [ $? -eq 0 ]; then
     echo "Restarting Nginx"
     sudo systemctl restart nginx
 
-    # Install Certbot and obtain SSL certificate
-    if ! command -v certbot > /dev/null; then
-        echo "Installing Certbot"
-        sudo yum install -y certbot python3-certbot-nginx
+    # Verify DNS resolution
+    echo "Checking DNS resolution for $DOMAIN"
+    if nslookup $DOMAIN; then
+        echo "DNS resolution successful, obtaining SSL certificate with Certbot"
+        # Install Certbot and obtain SSL certificate
+        if ! command -v certbot > /dev/null; then
+            echo "Installing Certbot"
+            sudo yum install -y certbot python3-certbot-nginx
+        fi
+
+        echo "Obtaining SSL certificate with Certbot"
+        sudo certbot --nginx --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
+
+        echo "Reloading Nginx with SSL configuration"
+        sudo systemctl reload nginx
+    else
+        echo "DNS resolution failed for $DOMAIN, please check your DNS settings"
     fi
-
-    echo "Obtaining SSL certificate with Certbot"
-    sudo certbot --nginx --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
-
-    echo "Reloading Nginx with SSL configuration"
-    sudo systemctl reload nginx
 
     echo "Deployment completed 🚀"
 else
