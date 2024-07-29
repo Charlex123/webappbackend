@@ -10,7 +10,7 @@ import logging
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
+DEBUG = env.bool("DEBUG", False)
 # Load environment variables from .env file
 load_dotenv(dotenv_path="/.env")
 
