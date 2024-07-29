@@ -11,9 +11,10 @@ import requests
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 DATABASE_URL = os.getenv('DATABASE_URL')
+BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 
 print(f"BOT_TOKEN: {BOT_TOKEN}")
 print(f"DATABASE_URL: {DATABASE_URL}")
