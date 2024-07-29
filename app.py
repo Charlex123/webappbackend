@@ -1,5 +1,5 @@
-from flask import Flask, request, jsonify
-from models import db, User, Referral
+from flask import Flask, request, jsonify, make_response
+from models import db, User, Referral, Blockchains, Testnet, Clubs, Country, Managers
 from dotenv import load_dotenv
 from pathlib import Path
 from flask_cors import CORS 
@@ -13,8 +13,11 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+# DATABASE_URL = os.getenv('DATABASE_URL')
+# BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+DATABASE_URL="postgresql://postgres:postgres01@localhost:5432/postgres"
+BOT_TOKEN="6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 
 print(f"BOT_TOKEN: {BOT_TOKEN}")
 print(f"DATABASE_URL: {DATABASE_URL}")
@@ -52,6 +55,46 @@ def get_users():
     except Exception as e:
         logger.error(f"Error fetching users: {e}")
         return jsonify({'message': 'Internal Server Error'}), 500
+    
+# get all blockchains
+@app.route('/api/blockchains', methods=['GET'])
+def get_blockchains():
+  try:
+    blkchains = Blockchains.query.all()
+    blkchains_data = [{'id': blkchain.id, 'symbol': blkchain.symbol, 'logo' : blkchain.logo, 'points': blkchain.points} for blkchain in blkchains]
+    return jsonify(blkchains_data), 200
+  except Exception as e:
+    return make_response(jsonify({'message': 'error getting blockchains', 'error': str(e)}), 500)
+
+# get all clubs
+@app.route('/api/clubs', methods=['GET'])
+def get_clubs():
+  try:
+    clubs = Clubs.query.all()
+    clubs_data = [{'id': club.id, 'symbol': club.symbol, 'logo' : club.logo,'points': club.points} for club in clubs]
+    return jsonify(clubs_data), 200
+  except Exception as e:
+    return make_response(jsonify({'message': 'error getting clubs', 'error': str(e)}), 500)
+
+# get all managers
+@app.route('/api/managers', methods=['GET'])
+def get_managers():
+  try:
+    managers = Managers.query.all()
+    managers_data = [{'id': manager.id, 'symbol': manager.symbol, 'logo' : manager.logo,'points': manager.points} for manager in managers]
+    return jsonify(managers_data), 200
+  except Exception as e:
+    return make_response(jsonify({'message': 'error getting clubs', 'error': str(e)}), 500)
+    
+# get all countries
+@app.route('/api/countries', methods=['GET'])
+def get_countries():
+  try:
+    countries = Country.query.all()
+    countries_data = [{'id': country.id, 'symbol': country.symbol, 'logo' : country.logo,'points': country.points} for country in countries]
+    return jsonify(countries_data), 200
+  except Exception as e:
+    return make_response(jsonify({'message': 'error getting clubs', 'error': str(e)}), 500)
     
 @app.route('/api/users/<chat_id>', methods=['GET'])
 def get_user(chat_id):
@@ -301,6 +344,116 @@ def get_referrals_by_chat_id(chat_id):
         logger.error(f"Error fetching referrals for chat_id {chat_id}: {e}")
         return jsonify({'message': 'Internal Server Error'}), 500
 
+@app.route('/api/blockchain/add', methods=['POST'])
+def add_blockchain_route():
+    data = request.get_json()
+    alreadyexists = Blockchains.query.filter_by(name=data['name']).first()
+    if alreadyexists:
+        return jsonify({
+            'messages': "already exists",
+        }), 200
+    
+    new_blockchain = Blockchains(
+        category=data['category'], 
+        symbol=data['symbol'],
+        logo=data['logo'],
+        points=data['points']
+    )
+    db.session.add(new_blockchain)
+    db.session.commit()
+    return jsonify({
+        'category': new_blockchain.category,
+        'symbol': new_blockchain.symbol,
+        'logo': new_blockchain.logo,
+        'points': new_blockchain.points
+    }), 201
+    
+@app.route('/api/club/add', methods=['POST'])
+def add_club_route():
+    data = request.get_json()
+    alreadyexists = Clubs.query.filter_by(name=data['name']).first()
+    if alreadyexists:
+        return jsonify({
+            'messages': "already exists",
+        }), 200
+    
+    new_club = Clubs(
+        name=data['name'], 
+        symbol=data['symbol'],
+        logo=data['logo'],
+        points=data['points']
+    )
+    db.session.add(new_club)
+    db.session.commit()
+    return jsonify({
+        'name': new_club.name,
+        'symbol': new_club.symbol,
+        'logo': new_club.logo,
+        'points': new_club.points
+    }), 201
+    
+@app.route('/api/manager/add', methods=['POST'])
+def add_club_route():
+    data = request.get_json()
+    alreadyexists = Clubs.query.filter_by(name=data['name']).first()
+    if alreadyexists:
+        return jsonify({
+            'messages': "manager already exists",
+        }), 200
+    
+    new_manager = Managers(
+        name=data['name'], 
+        symbol=data['symbol'],
+        logo=data['logo'],
+        points=data['points']
+    )
+    db.session.add(new_manager)
+    db.session.commit()
+    return jsonify({
+        'name': new_manager.name,
+        'symbol': new_manager.symbol,
+        'logo': new_manager.logo,
+        'points': new_manager.points
+    }), 201
+    
+@app.route('/api/country/add', methods=['POST'])
+def add_country_route():
+    data = request.get_json()
+    alreadyexists = Clubs.query.filter_by(name=data['name']).first()
+    if alreadyexists:
+        return jsonify({
+            'messages': "already exists",
+        }), 200
+    
+    new_country = Clubs(
+        name=data['name'], 
+        symbol=data['symbol'],
+        logo=data['logo'],
+        points=data['points']
+    )
+    db.session.add(new_country)
+    db.session.commit()
+    return jsonify({
+        'name': new_country.name,
+        'symbol': new_country.symbol,
+        'logo': new_country.logo,
+        'points': new_country.points
+    }), 201
+    
+# update user testnet qualification
+@app.route('/api/users/<chat_id>/updatetestnet', methods=['PUT'])
+def update_exchange(chat_id):
+    try:
+        user = User.query.filter_by(chat_id=chat_id).first()
+        if user:
+            user.testnet = True
+            db.session.commit()
+            return jsonify({'message': 'testnet updated successfully', 'testnet': user.testnet})
+        else:
+            return jsonify({'message': 'User not found'}), 404
+    except Exception as e:
+        logger.error(f"Error updating testnet: {e}")
+        return jsonify({'message': 'Internal Server Error'}), 500
 
 @app.route('/api/users/adduser', methods=['POST'])
 def add_user_route():

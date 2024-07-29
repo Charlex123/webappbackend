@@ -10,6 +10,7 @@ class User(db.Model):
     level = db.Column(db.String(80), default='starter', nullable=False)
     levelpoint = db.Column(db.Integer, default=0)
     exchange = db.Column(db.String(180), default='Binance')
+    testnet = db.Column(db.Boolean, default=False)
     multiplier = db.Column(db.Integer, default=5)
     dailypoints = db.Column(db.Integer, default=5000)
     dailypointscounter = db.Column(db.Integer, default=5000)
@@ -24,42 +25,39 @@ class Referral(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     referred_chat_id = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    
-class Testnet(db.Model):
-    __tablename__ = 'testnet'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    points = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
 class Blockchains(db.Model):
     __tablename__ = 'blockchains'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(120), nullable=False)
     symbol = db.Column(db.String(60), nullable=False)
+    logo = db.Column(db.String(255), nullable=True)
     points = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     
 class Clubs(db.Model):
     __tablename__ = 'clubs'
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(120), nullable=False)
     symbol = db.Column(db.String(60), nullable=False)
+    logo = db.Column(db.String(255), nullable=True)
     points = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     
 class Managers(db.Model):
     __tablename__ = 'managers'
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(120), nullable=False)
     symbol = db.Column(db.String(60), nullable=False)
     points = db.Column(db.Integer, nullable=False)
+    logo = db.Column(db.String(255), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
 class Country(db.Model):
     __tablename__ = 'country'
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(120), nullable=False)
     symbol = db.Column(db.String(60), nullable=False)
     points = db.Column(db.Integer, nullable=False)
+    logo = db.Column(db.String(255), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
