@@ -55,6 +55,12 @@ fi
 echo "Starting bot.py"
 nohup python3 bot.py &
 
+# Check if port 80 is in use and stop the process if needed
+if sudo lsof -i :80 > /dev/null; then
+    echo "Port 80 is in use, stopping the process"
+    sudo kill $(sudo lsof -t -i :80)
+fi
+
 # Create Nginx reverse proxy configuration
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
 sudo bash -c "cat > $NGINX_CONF <<EOF
