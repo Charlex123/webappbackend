@@ -45,6 +45,12 @@ echo "Starting Gunicorn"
 sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user www-data --group www-data --daemon
 echo "Started Gunicorn 🚀"
 
+# Stop any existing bot.py process
+if pgrep -f "bot.py" > /dev/null; then
+    echo "Stopping existing bot.py process"
+    pkill -f "bot.py"
+fi
+
 # Start the bot script
 echo "Starting bot.py"
 nohup python3 bot.py &
