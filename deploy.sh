@@ -42,7 +42,7 @@ sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user www-data --group www-data --daemon
+sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user nginx --group nginx --daemon
 echo "Started Gunicorn 🚀"
 
 # Stop any existing bot.py process
