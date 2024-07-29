@@ -12,9 +12,6 @@ import requests
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Load environment variables from .env file
-# load_dotenv(dotenv_path="/.env")
-
 BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 DATABASE_URL = os.getenv('DATABASE_URL')
 
