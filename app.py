@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
-load_dotenv(dotenv_path="/var/www/flaskapp/.env")
+load_dotenv(dotenv_path="/.env")
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
