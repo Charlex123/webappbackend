@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response
-from models import db, User, Referral, Blockchains, Testnet, Clubs, Country, Managers
+from models import db, User, Referral, Blockchains, Clubs, Country, Managers
 from dotenv import load_dotenv
 from pathlib import Path
 from flask_cors import CORS 
