@@ -11,10 +11,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-load_dotenv(dotenv_path="/.env")
-
 DATABASE_URL = os.getenv('DATABASE_URL')
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 
 
 print(f"BOT_TOKEN: {BOT_TOKEN}")
@@ -391,7 +389,7 @@ def add_club_route():
     }), 201
     
 @app.route('/api/manager/add', methods=['POST'])
-def add_club_route():
+def add_manager_route():
     data = request.get_json()
     alreadyexists = Clubs.query.filter_by(name=data['name']).first()
     if alreadyexists:
@@ -440,7 +438,7 @@ def add_country_route():
     
 # update user testnet qualification
 @app.route('/api/users/<chat_id>/updatetestnet', methods=['PUT'])
-def update_exchange(chat_id):
+def update_testnet(chat_id):
     try:
         user = User.query.filter_by(chat_id=chat_id).first()
         if user:

@@ -13,10 +13,10 @@ import requests
 logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables from .env file
-load_dotenv(dotenv_path="/var/www/flaskapp/.env")
+# load_dotenv(dotenv_path="/.env")
 
+BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 DATABASE_URL = os.getenv('DATABASE_URL')
-BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 print(f"BOT_TOKEN: {BOT_TOKEN}")
 print(f"DATABASE_URL: {DATABASE_URL}")
