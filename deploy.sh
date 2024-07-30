@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
@@ -15,6 +17,7 @@ echo "Moving files to app folder"
 sudo cp -r $EC2_USER_DIR/* $APP_DIR
 
 # Ensure the app directory has the correct permissions
+echo "Setting ownership of app directory"
 sudo chown -R ec2-user:ec2-user $APP_DIR
 
 # Navigate to the app directory
@@ -40,7 +43,8 @@ echo "Installing Nginx"
 sudo yum install -y nginx
 
 # Stop any existing Gunicorn process
-sudo pkill gunicorn
+echo "Stopping any existing Gunicorn process"
+sudo pkill gunicorn || true
 sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application using the virtual environment
@@ -66,7 +70,8 @@ fi
 
 # Create Nginx reverse proxy configuration
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
-sudo bash -c "cat > $NGINX_CONF" <<EOF
+echo "Creating Nginx reverse proxy configuration"
+sudo bash -c "cat > $NGINX_CONF <<EOF
 server {
     listen 80;
     server_name $DOMAIN;
@@ -80,7 +85,7 @@ server {
         proxy_cache_bypass \$http_upgrade;
     }
 }
-EOF
+EOF"
 
 # Test Nginx configuration before restarting
 echo "Testing Nginx configuration"
