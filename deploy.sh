@@ -22,7 +22,7 @@ sudo chown -R ec2-user:ec2-user $APP_DIR
 cd $APP_DIR
 
 echo "Installing application dependencies from requirements.txt"
-sudo pip install --upgrade pip
+# sudo pip install --upgrade pip
 sudo pip install -r requirements.txt
 
 if command -v nginx > /dev/null; then
