@@ -40,9 +40,9 @@ sudo yum install -y nginx
 sudo pkill gunicorn
 sudo rm -rf flaskapp.sock
 
-# Start Gunicorn with the Flask application
+# Start Gunicorn with the Flask application using the virtual environment
 echo "Starting Gunicorn"
-sudo -u nginx -g nginx gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
+sudo /var/www/flaskapp/venv/bin/gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
 echo "Started Gunicorn 🚀"
 
 # Stop any existing bot.py process
@@ -51,9 +51,9 @@ if pgrep -f "bot.py" > /dev/null; then
     pkill -f "bot.py"
 fi
 
-# Start the bot script
+# Start the bot script using the virtual environment
 echo "Starting bot.py"
-nohup python3 bot.py &
+nohup /var/www/flaskapp/venv/bin/python3 bot.py &
 
 # Check if port 80 is in use and stop the process if needed
 if sudo lsof -i :80 > /dev/null; then
