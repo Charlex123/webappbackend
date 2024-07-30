@@ -61,19 +61,19 @@ proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection "upgrade";
 EOF"
 
-NGINX_CONF="/etc/nginx/nginx.conf"
-echo "Creating Nginx reverse proxy configuration"
-sudo bash -c "cat > ${NGINX_CONF} <<EOF
-server {
-    listen 80;
-    server_name ${DOMAIN};
+# NGINX_CONF="/etc/nginx/nginx.conf"
+# echo "Creating Nginx reverse proxy configuration"
+# sudo bash -c "cat > ${NGINX_CONF} <<EOF
+# server {
+#     listen 80;
+#     server_name ${DOMAIN};
 
-    location / {
-        proxy_pass http://54.161.105.37:80;
-        include /etc/nginx/proxy_params;
-    }
-}
-EOF"
+#     location / {
+#         proxy_pass http://54.161.105.37:80;
+#         include /etc/nginx/proxy_params;
+#     }
+# }
+# EOF"
 
 echo "Testing Nginx configuration"
 sudo nginx -t
