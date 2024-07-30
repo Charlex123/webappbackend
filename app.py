@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify, make_response
 from models import db, User, Referral, Blockchains, Clubs, Country, Managers
 from dotenv import load_dotenv
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from flask_cors import CORS 
 import os
 import telebot
@@ -14,6 +17,12 @@ logger = logging.getLogger(__name__)
 DATABASE_URL = os.getenv('DATABASE_URL')
 BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
 
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name = os.getenv('CLOUD_NAME'),
+    api_key = os.getenv('CLOUDINARY_API_KEY'),
+    api_secret = os.getenv('CLOUDINARY_SECRET_KEY')
+)
 
 print(f"BOT_TOKEN: {BOT_TOKEN}")
 print(f"DATABASE_URL: {DATABASE_URL}")
@@ -341,100 +350,146 @@ def get_referrals_by_chat_id(chat_id):
         return jsonify({'message': 'Internal Server Error'}), 500
 
 @app.route('/api/blockchain/add', methods=['POST'])
-def add_blockchain_route():
-    data = request.get_json()
-    alreadyexists = Blockchains.query.filter_by(name=data['name']).first()
-    if alreadyexists:
+def add_blockchin_route():
+    if 'logo' not in request.files:
+        return jsonify({'message': 'No blockchain logo file provided'}), 400
+
+    logo = request.files['logo']
+    if logo.filename == '':
+        return jsonify({'message': 'No selected blockchain logo file'}), 400
+
+    try:
+        upload_result = cloudinary.uploader.upload(logo)
+        logo_url = upload_result['secure_url']
+
+        data = request.form
+        alreadyexists = Blockchains.query.filter_by(name=data['name']).first()
+        if alreadyexists:
+            return jsonify({'message': 'Blockchain already exists'}), 200
+        
+        new_blockchain = Blockchains(
+            name=data['name'],
+            symbol=data['symbol'],
+            points=data['points'],
+            logo=logo_url
+        )
+        db.session.add(new_blockchain)
+        db.session.commit()
         return jsonify({
-            'messages': "already exists",
-        }), 200
-    
-    new_blockchain = Blockchains(
-        category=data['category'], 
-        symbol=data['symbol'],
-        logo=data['logo'],
-        points=data['points']
-    )
-    db.session.add(new_blockchain)
-    db.session.commit()
-    return jsonify({
-        'category': new_blockchain.category,
-        'symbol': new_blockchain.symbol,
-        'logo': new_blockchain.logo,
-        'points': new_blockchain.points
-    }), 201
+            'name': new_blockchain.name,
+            'symbol': new_blockchain.symbol,
+            'logo': new_blockchain.logo,
+            'points': new_blockchain.points
+        }), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to blockchain upload logo', 'error': str(e)}), 500
     
 @app.route('/api/club/add', methods=['POST'])
 def add_club_route():
-    data = request.get_json()
-    alreadyexists = Clubs.query.filter_by(name=data['name']).first()
-    if alreadyexists:
+    if 'logo' not in request.files:
+        return jsonify({'message': 'No club logo file provided'}), 400
+
+    logo = request.files['logo']
+    if logo.filename == '':
+        return jsonify({'message': 'No selected club logo file'}), 400
+
+    try:
+        upload_result = cloudinary.uploader.upload(logo)
+        logo_url = upload_result['secure_url']
+
+        data = request.form
+        alreadyexists = Clubs.query.filter_by(name=data['name']).first()
+        if alreadyexists:
+            return jsonify({'message': 'club already exists'}), 200
+        
+        new_club = Clubs(
+            name=data['name'],
+            symbol=data['symbol'],
+            points=data['points'],
+            logo=logo_url
+        )
+        db.session.add(new_club)
+        db.session.commit()
         return jsonify({
-            'messages': "already exists",
-        }), 200
-    
-    new_club = Clubs(
-        name=data['name'], 
-        symbol=data['symbol'],
-        logo=data['logo'],
-        points=data['points']
-    )
-    db.session.add(new_club)
-    db.session.commit()
-    return jsonify({
-        'name': new_club.name,
-        'symbol': new_club.symbol,
-        'logo': new_club.logo,
-        'points': new_club.points
-    }), 201
+            'name': new_club.name,
+            'symbol': new_club.symbol,
+            'logo': new_club.logo,
+            'points': new_club.points
+        }), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to club upload logo', 'error': str(e)}), 500
+
     
 @app.route('/api/manager/add', methods=['POST'])
 def add_manager_route():
-    data = request.get_json()
-    alreadyexists = Clubs.query.filter_by(name=data['name']).first()
-    if alreadyexists:
+    if 'logo' not in request.files:
+        return jsonify({'message': 'No manager logo file provided'}), 400
+
+    logo = request.files['logo']
+    if logo.filename == '':
+        return jsonify({'message': 'No selected manager logo file'}), 400
+
+    try:
+        upload_result = cloudinary.uploader.upload(logo)
+        logo_url = upload_result['secure_url']
+
+        data = request.form
+        alreadyexists = Managers.query.filter_by(name=data['name']).first()
+        if alreadyexists:
+            return jsonify({'message': 'Manager already exists'}), 200
+        
+        new_manager = Managers(
+            name=data['name'],
+            symbol=data['symbol'],
+            points=data['points'],
+            logo=logo_url
+        )
+        db.session.add(new_manager)
+        db.session.commit()
         return jsonify({
-            'messages': "manager already exists",
-        }), 200
-    
-    new_manager = Managers(
-        name=data['name'], 
-        symbol=data['symbol'],
-        logo=data['logo'],
-        points=data['points']
-    )
-    db.session.add(new_manager)
-    db.session.commit()
-    return jsonify({
-        'name': new_manager.name,
-        'symbol': new_manager.symbol,
-        'logo': new_manager.logo,
-        'points': new_manager.points
-    }), 201
+            'name': new_manager.name,
+            'symbol': new_manager.symbol,
+            'logo': new_manager.logo,
+            'points': new_manager.points
+        }), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to manager upload logo', 'error': str(e)}), 500
     
 @app.route('/api/country/add', methods=['POST'])
 def add_country_route():
-    data = request.get_json()
-    alreadyexists = Clubs.query.filter_by(name=data['name']).first()
-    if alreadyexists:
+    if 'logo' not in request.files:
+        return jsonify({'message': 'No country logo file provided'}), 400
+
+    logo = request.files['logo']
+    if logo.filename == '':
+        return jsonify({'message': 'No selected country logo file'}), 400
+
+    try:
+        upload_result = cloudinary.uploader.upload(logo)
+        logo_url = upload_result['secure_url']
+
+        data = request.form
+        alreadyexists = Country.query.filter_by(name=data['name']).first()
+        if alreadyexists:
+            return jsonify({'message': 'Country already exists'}), 200
+        
+        new_country = Country(
+            name=data['name'],
+            symbol=data['symbol'],
+            points=data['points'],
+            logo=logo_url
+        )
+        db.session.add(new_country)
+        db.session.commit()
         return jsonify({
-            'messages': "already exists",
-        }), 200
-    
-    new_country = Clubs(
-        name=data['name'], 
-        symbol=data['symbol'],
-        logo=data['logo'],
-        points=data['points']
-    )
-    db.session.add(new_country)
-    db.session.commit()
-    return jsonify({
-        'name': new_country.name,
-        'symbol': new_country.symbol,
-        'logo': new_country.logo,
-        'points': new_country.points
-    }), 201
+            'name': new_country.name,
+            'symbol': new_country.symbol,
+            'logo': new_country.logo,
+            'points': new_country.points
+        }), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to country upload logo', 'error': str(e)}), 500
+
     
 # update user testnet qualification
 @app.route('/api/users/<chat_id>/updatetestnet', methods=['PUT'])
