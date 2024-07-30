@@ -38,7 +38,7 @@ sudo pkill gunicorn || true
 sudo rm -rf flaskapp.sock
 
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:${APP_DIR}/flaskapp.sock app:app --daemon
+sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
 
 if pgrep -f "bot.py" > /dev/null; then
     echo "Stopping existing bot.py process"
@@ -55,18 +55,23 @@ fi
 
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
 echo "Creating Nginx reverse proxy configuration"
-sudo bash -c "cat > ${NGINX_CONF} <<'EOF'
+sudo bash -c "cat > $NGINX_CONF <<EOF
 server {
     listen 80;
     server_name ${DOMAIN};
 
     location / {
-        proxy_pass http://unix:${APP_DIR}/flaskapp.sock;
+        #your proxy directives
+        proxy_pass http://54.196.174.228:80;
+        proxy_redirect off;
+        proxy_ssl_session_reuse on;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forward-For \$proxy_add_x_forwarded_for;
+        proxy_set_header Host \$http_host;
+        proxy_set_header X-NginX-Proxy false;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
+        proxy_set_header Connection upgrade;
     }
 }
 EOF"
