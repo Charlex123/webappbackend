@@ -8,18 +8,18 @@ DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
 echo "Deleting old app"
-sudo rm -rf $APP_DIR
+sudo rm -rf ${APP_DIR}
 
 echo "Creating app folder"
-sudo mkdir -p $APP_DIR
+sudo mkdir -p ${APP_DIR}
 
 echo "Moving files to app folder"
-sudo cp -r $EC2_USER_DIR/* $APP_DIR
+sudo cp -r ${EC2_USER_DIR}/* ${APP_DIR}
 
 echo "Setting ownership of app directory"
-sudo chown -R ec2-user:ec2-user $APP_DIR
+sudo chown -R ec2-user:ec2-user ${APP_DIR}
 
-cd $APP_DIR
+cd ${APP_DIR}
 
 echo "Installing application dependencies from requirements.txt"
 # sudo pip install --upgrade pip
@@ -38,7 +38,7 @@ sudo pkill gunicorn || true
 sudo rm -rf flaskapp.sock
 
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
+sudo gunicorn --workers 3 --bind unix:${APP_DIR}/flaskapp.sock app:app --daemon
 
 if pgrep -f "bot.py" > /dev/null; then
     echo "Stopping existing bot.py process"
@@ -55,7 +55,7 @@ fi
 
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
 echo "Creating Nginx reverse proxy configuration"
-sudo bash -c "cat > $NGINX_CONF <<'EOF'
+sudo bash -c "cat > ${NGINX_CONF} <<'EOF'
 server {
     listen 80;
     server_name ${DOMAIN};
