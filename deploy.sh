@@ -62,7 +62,7 @@ server {
 
     location / {
         #your proxy directives
-        proxy_pass http://54.196.174.228:80;
+        proxy_pass http://54.161.105.37:80;
         proxy_redirect off;
         proxy_ssl_session_reuse on;
         proxy_set_header X-Real-IP \$remote_addr;
