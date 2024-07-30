@@ -14,11 +14,11 @@ sudo mkdir -p $APP_DIR
 echo "Moving files to app folder"
 sudo cp -r $EC2_USER_DIR/* $APP_DIR
 
-# Navigate to the app directory
-cd $APP_DIR
-
 # Ensure the app directory has the correct permissions
 sudo chown -R ec2-user:ec2-user $APP_DIR
+
+# Navigate to the app directory
+cd $APP_DIR
 
 # Create and activate virtual environment
 echo "Setting up virtual environment"
@@ -66,7 +66,7 @@ fi
 
 # Create Nginx reverse proxy configuration
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
-sudo bash -c "cat > $NGINX_CONF <<EOF
+sudo bash -c "cat > $NGINX_CONF" <<EOF
 server {
     listen 80;
     server_name $DOMAIN;
@@ -74,13 +74,13 @@ server {
     location / {
         proxy_pass http://unix:$APP_DIR/flaskapp.sock;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade \\\$http_upgrade;
+        proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \\\$host;
-        proxy_cache_bypass \\\$http_upgrade;
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
     }
 }
-EOF"
+EOF
 
 # Test Nginx configuration before restarting
 echo "Testing Nginx configuration"
