@@ -21,13 +21,9 @@ sudo chown -R ec2-user:ec2-user $APP_DIR
 
 cd $APP_DIR
 
-echo "Setting up virtual environment"
-python3 -m venv venv
-source venv/bin/activate
-
 echo "Installing application dependencies from requirements.txt"
-pip install --upgrade pip
-pip install -r requirements.txt
+sudo pip3 install --upgrade pip
+sudo pip3 install -r requirements.txt
 
 if command -v nginx > /dev/null; then
     echo "Uninstalling Nginx"
@@ -42,7 +38,7 @@ sudo pkill gunicorn || true
 sudo rm -rf flaskapp.sock
 
 echo "Starting Gunicorn"
-sudo $APP_DIR/venv/bin/gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
+sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
 
 if pgrep -f "bot.py" > /dev/null; then
     echo "Stopping existing bot.py process"
@@ -50,7 +46,7 @@ if pgrep -f "bot.py" > /dev/null; then
 fi
 
 echo "Starting bot.py"
-nohup $APP_DIR/venv/bin/python3 bot.py &
+nohup python3 bot.py &
 
 if sudo lsof -i :80 > /dev/null; then
     echo "Port 80 is in use, stopping the process"
