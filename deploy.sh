@@ -54,12 +54,12 @@ if sudo lsof -i :80 > /dev/null; then
 fi
 
 # Create the proxy_params file
-PROXY_PARAMS="/etc/nginx/proxy_params"
-echo "Creating Nginx proxy parameters configuration"
-sudo bash -c "cat > ${PROXY_PARAMS} <<EOF
-proxy_set_header Upgrade $http_upgrade;
-proxy_set_header Connection "upgrade";
-EOF"
+# PROXY_PARAMS="/etc/nginx/proxy_params"
+# echo "Creating Nginx proxy parameters configuration"
+# sudo bash -c "cat > ${PROXY_PARAMS} <<EOF
+# proxy_set_header Upgrade $http_upgrade;
+# proxy_set_header Connection "upgrade";
+# EOF"
 
 # NGINX_CONF="/etc/nginx/nginx.conf"
 # echo "Creating Nginx reverse proxy configuration"
