@@ -7,8 +7,6 @@ EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
-
-
 echo "Deleting old app"
 sudo rm -rf $APP_DIR
 
@@ -32,6 +30,7 @@ source venv/bin/activate
 
 # Install application dependencies from requirements.txt
 echo "Installing application dependencies from requirements.txt"
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Uninstall Nginx if it is already installed
