@@ -17,6 +17,9 @@ sudo cp -r $EC2_USER_DIR/* $APP_DIR
 # Navigate to the app directory
 cd $APP_DIR
 
+# Ensure the app directory has the correct permissions
+sudo chown -R ec2-user:ec2-user $APP_DIR
+
 # Create and activate virtual environment
 echo "Setting up virtual environment"
 python3 -m venv venv
@@ -42,7 +45,7 @@ sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application using the virtual environment
 echo "Starting Gunicorn"
-sudo /var/www/flaskapp/venv/bin/gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
+sudo $APP_DIR/venv/bin/gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
 echo "Started Gunicorn 🚀"
 
 # Stop any existing bot.py process
@@ -53,7 +56,7 @@ fi
 
 # Start the bot script using the virtual environment
 echo "Starting bot.py"
-nohup /var/www/flaskapp/venv/bin/python3 bot.py &
+nohup $APP_DIR/venv/bin/python3 bot.py &
 
 # Check if port 80 is in use and stop the process if needed
 if sudo lsof -i :80 > /dev/null; then
