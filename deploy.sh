@@ -2,7 +2,7 @@
 
 APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
-DOMAIN="webappbackend.fifarewrd.io"
+DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
 echo "Deleting old app"
