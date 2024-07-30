@@ -8,18 +8,18 @@ DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
 echo "Deleting old app"
-sudo rm -rf ${APP_DIR}
+sudo rm -rf $APP_DIR
 
 echo "Creating app folder"
-sudo mkdir -p ${APP_DIR}
+sudo mkdir -p $APP_DIR
 
 echo "Moving files to app folder"
-sudo cp -r ${EC2_USER_DIR}/* ${APP_DIR}
+sudo cp -r $EC2_USER_DIR/* $APP_DIR
 
 echo "Setting ownership of app directory"
-sudo chown -R ec2-user:ec2-user ${APP_DIR}
+sudo chown -R ec2-user:ec2-user $APP_DIR
 
-cd ${APP_DIR}
+cd $APP_DIR
 
 echo "Installing application dependencies from requirements.txt"
 # sudo pip install --upgrade pip
