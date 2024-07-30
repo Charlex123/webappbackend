@@ -16,15 +16,15 @@ sudo cp -r $EC2_USER_DIR/* $APP_DIR
 
 # Navigate to the app directory
 cd $APP_DIR
-sudo cp $EC2_USER_DIR/.env .env
 
-sudo yum update -y
-echo "Installing Python and pip"
-sudo yum install -y python3 python3-pip
+# Create and activate virtual environment
+echo "Setting up virtual environment"
+python3 -m venv venv
+source venv/bin/activate
 
 # Install application dependencies from requirements.txt
 echo "Installing application dependencies from requirements.txt"
-sudo pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 # Uninstall Nginx if it is already installed
 if command -v nginx > /dev/null; then
@@ -42,7 +42,7 @@ sudo rm -rf flaskapp.sock
 
 # Start Gunicorn with the Flask application
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --user nginx --group nginx --daemon
+sudo -u nginx -g nginx gunicorn --workers 3 --bind unix:$APP_DIR/flaskapp.sock app:app --daemon
 echo "Started Gunicorn 🚀"
 
 # Stop any existing bot.py process
