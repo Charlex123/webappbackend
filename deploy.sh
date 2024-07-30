@@ -53,6 +53,16 @@ if sudo lsof -i :80 > /dev/null; then
     sudo kill $(sudo lsof -t -i :80)
 fi
 
+# Create the proxy_params file
+PROXY_PARAMS="/etc/nginx/proxy_params"
+echo "Creating Nginx proxy parameters configuration"
+sudo bash -c "cat > ${PROXY_PARAMS} <<EOF
+proxy_set_header Host \$http_host;
+proxy_set_header X-Real-IP \$remote_addr;
+proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto \$scheme;
+EOF"
+
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
 echo "Creating Nginx reverse proxy configuration"
 sudo bash -c "cat > ${NGINX_CONF} <<EOF
@@ -62,15 +72,7 @@ server {
 
     location / {
         proxy_pass http://54.161.105.37:80;
-        proxy_redirect off;
-        proxy_ssl_session_reuse on;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Host \$http_host;
-        proxy_set_header X-NginX-Proxy false;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection upgrade;
+        include /etc/nginx/proxy_params;
     }
 }
 EOF"
