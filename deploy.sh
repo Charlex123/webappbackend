@@ -58,8 +58,10 @@ echo "Creating Nginx reverse proxy configuration"
 sudo bash -c "cat > ${NGINX_CONF} <<EOF
 user nginx;
 worker_processes auto;
-error_log /var/log/nginx/error.log;
+error_log /var/log/nginx/error.log notice;
 pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*.conf;
 
 events {
     worker_connections 1024;
@@ -81,16 +83,12 @@ http {
     include             /etc/nginx/mime.types;
     default_type        application/octet-stream;
 
-    upstream flaskapp {
-        server 54.161.105.37:80;
-    }
-
     server {
         listen 80;
         server_name webappbackend.fifareward.io www.webappbackend.fifareward.io;
 
         location / {
-            proxy_pass http://flaskapp;
+            proxy_pass http://127.0.0.1:8080;
             proxy_set_header Host \$host;
             proxy_set_header X-Real-IP \$remote_addr;
             proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
