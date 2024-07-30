@@ -53,27 +53,75 @@ if sudo lsof -i :80 > /dev/null; then
     sudo kill $(sudo lsof -t -i :80)
 fi
 
-# Create the proxy_params file
-# PROXY_PARAMS="/etc/nginx/proxy_params"
-# echo "Creating Nginx proxy parameters configuration"
-# sudo bash -c "cat > ${PROXY_PARAMS} <<EOF
-# proxy_set_header Upgrade $http_upgrade;
-# proxy_set_header Connection "upgrade";
-# EOF"
+NGINX_CONF="/etc/nginx/nginx.conf"
+echo "Creating Nginx reverse proxy configuration"
+sudo bash -c "cat > ${NGINX_CONF} <<EOF
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
 
-# NGINX_CONF="/etc/nginx/nginx.conf"
-# echo "Creating Nginx reverse proxy configuration"
-# sudo bash -c "cat > ${NGINX_CONF} <<EOF
-# server {
-#     listen 80;
-#     server_name ${DOMAIN};
+events {
+    worker_connections 1024;
+}
 
-#     location / {
-#         proxy_pass http://54.161.105.37:80;
-#         include /etc/nginx/proxy_params;
-#     }
-# }
-# EOF"
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+                      
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    upstream flaskapp {
+        server 54.161.105.37:80;
+    }
+
+    server {
+        listen 80;
+        server_name webappbackend.fifareward.io;
+
+        location / {
+            proxy_pass http://flaskapp;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location ~ /.well-known/acme-challenge {
+            allow all;
+        }
+    }
+
+    server {
+        listen 443 ssl;
+        server_name webappbackend.fifareward.io;
+
+        ssl_certificate /etc/letsencrypt/live/webappbackend.fifareward.io/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/webappbackend.fifareward.io/privkey.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+            proxy_pass http://flaskapp;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+}
+
+EOF"
 
 echo "Testing Nginx configuration"
 sudo nginx -t
