@@ -23,7 +23,6 @@ cd ${APP_DIR}
 
 echo "Installing application dependencies from requirements.txt"
 sudo yum install -y python3-pip  # Ensure pip is installed
-sudo python3 -m pip install --upgrade pip
 sudo python3 -m pip install -r requirements.txt
 
 if command -v nginx > /dev/null; then
