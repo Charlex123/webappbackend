@@ -55,13 +55,13 @@ fi
 
 NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
 echo "Creating Nginx reverse proxy configuration"
-sudo bash -c "cat > $NGINX_CONF <<EOF
+sudo bash -c "cat > $NGINX_CONF <<'EOF'
 server {
     listen 80;
-    server_name $DOMAIN;
+    server_name ${DOMAIN};
 
     location / {
-        proxy_pass http://unix:$APP_DIR/flaskapp.sock;
+        proxy_pass http://unix:${APP_DIR}/flaskapp.sock;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -78,8 +78,8 @@ if [ $? -eq 0 ]; then
     echo "Restarting Nginx"
     sudo systemctl restart nginx
 
-    echo "Checking DNS resolution for $DOMAIN"
-    if nslookup $DOMAIN; then
+    echo "Checking DNS resolution for ${DOMAIN}"
+    if nslookup ${DOMAIN}; then
         echo "DNS resolution successful, obtaining SSL certificate with Certbot"
         if ! command -v certbot > /dev/null; then
             echo "Installing Certbot"
@@ -87,12 +87,12 @@ if [ $? -eq 0 ]; then
         fi
 
         echo "Obtaining SSL certificate with Certbot"
-        sudo certbot --nginx --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
+        sudo certbot --nginx --non-interactive --agree-tos --email ${EMAIL} -d ${DOMAIN}
 
         echo "Reloading Nginx with SSL configuration"
         sudo systemctl reload nginx
     else
-        echo "DNS resolution failed for $DOMAIN, please check your DNS settings"
+        echo "DNS resolution failed for ${DOMAIN}, please check your DNS settings"
     fi
 
     echo "Deployment completed 🚀"
