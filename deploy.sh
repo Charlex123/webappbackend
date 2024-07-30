@@ -7,6 +7,8 @@ EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
+
+
 echo "Deleting old app"
 sudo rm -rf $APP_DIR
 
