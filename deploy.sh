@@ -22,8 +22,9 @@ sudo chown -R ec2-user:ec2-user ${APP_DIR}
 cd ${APP_DIR}
 
 echo "Installing application dependencies from requirements.txt"
-sudo pip install --upgrade pip
-sudo pip install -r requirements.txt
+sudo yum install -y python3-pip  # Ensure pip is installed
+sudo python3 -m pip install --upgrade pip
+sudo python3 -m pip install -r requirements.txt
 
 if command -v nginx > /dev/null; then
     echo "Uninstalling Nginx"
@@ -61,12 +62,11 @@ server {
     server_name ${DOMAIN};
 
     location / {
-        #your proxy directives
         proxy_pass http://54.161.105.37:80;
         proxy_redirect off;
         proxy_ssl_session_reuse on;
         proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forward-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header Host \$http_host;
         proxy_set_header X-NginX-Proxy false;
         proxy_http_version 1.1;
