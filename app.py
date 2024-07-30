@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-BOT_TOKEN = "6694879202:AAFI9Fs8iKwD7cK1sia_2NvasKjQDWq82yU"
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 # Configure Cloudinary
 cloudinary.config(
