@@ -61,7 +61,7 @@ proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection "upgrade";
 EOF"
 
-NGINX_CONF="/etc/nginx/conf.d/flaskapp.conf"
+NGINX_CONF="/etc/nginx/nginx.conf"
 echo "Creating Nginx reverse proxy configuration"
 sudo bash -c "cat > ${NGINX_CONF} <<EOF
 server {
