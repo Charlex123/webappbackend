@@ -61,7 +61,7 @@ fi
 
 echo "Creating Nginx configuration from template"
 export DOLLAR='$'
-envsubst < ./src/configs/nginx/nginx.conf.template | sudo tee /etc/nginx/conf.d/webappbackend.fifareward.io.conf > /dev/null
+envsubst < ./configs/nginx/nginx.conf.template | sudo tee /etc/nginx/conf.d/webappbackend.fifareward.io.conf > /dev/null
 
 
 echo "Testing Nginx configuration"
