@@ -6,11 +6,11 @@ APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
-$host='$host'
-$remote_addr='$remote_addr'
-$request_uri='$request_uri'
-$proxy_add_x_forwarded_for='$proxy_add_x_forwarded_for'
-$scheme='$scheme'
+host='$host'
+remote_addr='$remote_addr'
+request_uri='$request_uri'
+proxy_add_x_forwarded_for='$proxy_add_x_forwarded_for'
+scheme='$scheme'
 
 
 echo "Deleting old app"
