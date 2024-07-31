@@ -7,9 +7,6 @@ EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
-# Load environment variables from .env file
-source .env
-
 echo "Deleting old app"
 sudo rm -rf ${APP_DIR}
 
@@ -23,6 +20,19 @@ echo "Setting ownership of app directory"
 sudo chown -R ec2-user:ec2-user ${APP_DIR}
 
 cd ${APP_DIR}
+
+echo "Creating .env file"
+cat << EOF > .env
+ENV=${ENV}
+POSTGRES_USER=${POSTGRES_USER}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_DB=${POSTGRES_DB}
+DATABASE_URL=${DATABASE_URL}
+BOT_TOKEN=${BOT_TOKEN}
+CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
+CLOUD_NAME=${CLOUD_NAME}
+EOF
 
 echo "Installing application dependencies from requirements.txt"
 sudo yum install -y python3-pip  # Ensure pip is installed
