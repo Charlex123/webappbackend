@@ -6,6 +6,12 @@ APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
+$host
+$remote_addr
+$request_uri
+$proxy_add_x_forwarded_for
+$scheme
+
 
 echo "Deleting old app"
 sudo rm -rf ${APP_DIR}
@@ -80,7 +86,7 @@ server {
 
 server {
     if (${host} = www.webappbackend.fifareward.io) {
-        return 301 https://${host}${request_uri;}
+        return 301 https://${host}${request_uri};
     }
 
     if (${host} = webappbackend.fifareward.io) {
