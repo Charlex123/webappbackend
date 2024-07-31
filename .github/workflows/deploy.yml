@@ -5,7 +5,7 @@ on:
     branches:
       - main
   pull_request:
-    branches: 
+    branches:
       - main 
 
 jobs:
@@ -81,9 +81,24 @@ jobs:
       - name: Create .env file dynamically 🧨
         env:
           ENV: ${{ secrets.ENV }}
-          EC2_USERNAME: ${{ secrets.EC2_USER }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_SECRET_KEY: ${{ secrets.CLOUDINARY_SECRET_KEY }}
+          CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
         run: |
-          echo "${ENV}" >> .env
+          echo "ENV=${ENV}" > .env
+          echo "POSTGRES_USER=${POSTGRES_USER}" >> .env
+          echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env
+          echo "POSTGRES_DB=${POSTGRES_DB}" >> .env
+          echo "DATABASE_URL=${DATABASE_URL}" >> .env
+          echo "BOT_TOKEN=${BOT_TOKEN}" >> .env
+          echo "CLOUDINARY_API_KEY": ${CLOUDINARY_API_KEY}
+          echo "CLOUDINARY_SECRET_KEY": ${CLOUDINARY_SECRET_KEY}
+          echo "CLOUD_NAME": ${CLOUD_NAME}
 
       - name: Copy files to remote server 🚙
         env:

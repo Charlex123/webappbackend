@@ -6,12 +6,6 @@ APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
-# host='$host'
-# remote_addr='$remote_addr'
-# request_uri='$request_uri'
-# proxy_add_x_forwarded_for='$proxy_add_x_forwarded_for'
-# scheme='$scheme'
-
 
 echo "Deleting old app"
 sudo rm -rf ${APP_DIR}
@@ -29,7 +23,10 @@ cd ${APP_DIR}
 
 echo "Installing application dependencies from requirements.txt"
 sudo yum install -y python3-pip  # Ensure pip is installed
-sudo python3 -m pip install -r requirements.txt
+sudo pip3 install virtualenv
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
 if command -v nginx > /dev/null; then
     echo "Uninstalling Nginx"
@@ -44,7 +41,7 @@ sudo pkill gunicorn || true
 sudo rm -rf flaskapp.sock
 
 echo "Starting Gunicorn"
-sudo gunicorn --workers 3 --bind unix:${APP_DIR}/flaskapp.sock app:app --daemon
+sudo venv/bin/gunicorn --workers 3 --bind unix:${APP_DIR}/flaskapp.sock app:app --daemon
 
 if pgrep -f "bot.py" > /dev/null; then
     echo "Stopping existing bot.py process"
@@ -52,7 +49,7 @@ if pgrep -f "bot.py" > /dev/null; then
 fi
 
 echo "Starting bot.py"
-nohup python3 bot.py &
+nohup venv/bin/python bot.py &
 
 if sudo lsof -i :80 > /dev/null; then
     echo "Port 80 is in use, stopping the process"
@@ -62,7 +59,6 @@ fi
 echo "Creating Nginx configuration from template"
 export DOLLAR='$'
 envsubst < ./configs/nginx/nginx.conf.template | sudo tee /etc/nginx/conf.d/webappbackend.fifareward.io.conf > /dev/null
-
 
 echo "Testing Nginx configuration"
 sudo nginx -t
