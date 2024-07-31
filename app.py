@@ -376,6 +376,7 @@ def add_blockchin_route():
         db.session.add(new_blockchain)
         db.session.commit()
         return jsonify({
+            'id': new_blockchain.id,
             'name': new_blockchain.name,
             'symbol': new_blockchain.symbol,
             'logo': new_blockchain.logo,
@@ -383,6 +384,42 @@ def add_blockchin_route():
         }), 201
     except Exception as e:
         return jsonify({'message': 'Failed to blockchain upload logo', 'error': str(e)}), 500
+    
+@app.route('/api/update_blockchain/<int:blockchain_id>', methods=['PUT'])
+def update_blockchain_route(blockchain_id):
+    try:
+        blockchain = Blockchains.query.get(blockchain_id)
+        if not blockchain:
+            return jsonify({'message': 'blockchain not found'}), 404
+
+        data = request.form
+        logo_url = blockchain.logo  # Default to existing logo
+
+        # Handle logo upload if a new file is provided
+        if 'logo' in request.files:
+            logo = request.files['logo']
+            if logo.filename != '':
+                upload_result = cloudinary.uploader.upload(logo)
+                logo_url = upload_result['secure_url']
+
+        # Update blockchain details
+        blockchain.name = data.get('name', blockchain.name)
+        blockchain.symbol = data.get('symbol', blockchain.symbol)
+        blockchain.points = data.get('points', blockchain.points)
+        blockchain.logo = logo_url
+
+        db.session.commit()
+
+        return jsonify({
+            'id': blockchain.id,
+            'name': blockchain.name,
+            'symbol': blockchain.symbol,
+            'logo': blockchain.logo,
+            'points': blockchain.points
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to update club', 'error': str(e)}), 500
+
     
 @app.route('/api/club/add', methods=['POST'])
 def add_club_route():
@@ -411,6 +448,7 @@ def add_club_route():
         db.session.add(new_club)
         db.session.commit()
         return jsonify({
+            'id': new_club.id,
             'name': new_club.name,
             'symbol': new_club.symbol,
             'logo': new_club.logo,
@@ -419,6 +457,40 @@ def add_club_route():
     except Exception as e:
         return jsonify({'message': 'Failed to club upload logo', 'error': str(e)}), 500
 
+@app.route('/api/update_club/<int:club_id>', methods=['PUT'])
+def update_club_route(club_id):
+    try:
+        club = Clubs.query.get(club_id)
+        if not club:
+            return jsonify({'message': 'Club not found'}), 404
+
+        data = request.form
+        logo_url = club.logo  # Default to existing logo
+
+        # Handle logo upload if a new file is provided
+        if 'logo' in request.files:
+            logo = request.files['logo']
+            if logo.filename != '':
+                upload_result = cloudinary.uploader.upload(logo)
+                logo_url = upload_result['secure_url']
+
+        # Update club details
+        club.name = data.get('name', club.name)
+        club.symbol = data.get('symbol', club.symbol)
+        club.points = data.get('points', club.points)
+        club.logo = logo_url
+
+        db.session.commit()
+
+        return jsonify({
+            'id': club.id,
+            'name': club.name,
+            'symbol': club.symbol,
+            'logo': club.logo,
+            'points': club.points
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to update club', 'error': str(e)}), 500
     
 @app.route('/api/manager/add', methods=['POST'])
 def add_manager_route():
@@ -447,6 +519,7 @@ def add_manager_route():
         db.session.add(new_manager)
         db.session.commit()
         return jsonify({
+            'id': new_manager.id,
             'name': new_manager.name,
             'symbol': new_manager.symbol,
             'logo': new_manager.logo,
@@ -454,6 +527,42 @@ def add_manager_route():
         }), 201
     except Exception as e:
         return jsonify({'message': 'Failed to manager upload logo', 'error': str(e)}), 500
+    
+@app.route('/api/update_manager/<int:manager_id>', methods=['PUT'])
+def update_manager_route(manager_id):
+    try:
+        manager = Managers.query.get(manager_id)
+        if not manager:
+            return jsonify({'message': 'Manager not found'}), 404
+
+        data = request.form
+        logo_url = manager.logo  # Default to existing logo
+
+        # Handle logo upload if a new file is provided
+        if 'logo' in request.files:
+            logo = request.files['logo']
+            if logo.filename != '':
+                upload_result = cloudinary.uploader.upload(logo)
+                logo_url = upload_result['secure_url']
+
+        # Update club details
+        manager.name = data.get('name', manager.name)
+        manager.symbol = data.get('symbol', manager.symbol)
+        manager.points = data.get('points', manager.points)
+        manager.logo = logo_url
+
+        db.session.commit()
+
+        return jsonify({
+            'id': manager.id,
+            'name': manager.name,
+            'symbol': manager.symbol,
+            'logo': manager.logo,
+            'points': manager.points
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to update manager', 'error': str(e)}), 500
+
     
 @app.route('/api/country/add', methods=['POST'])
 def add_country_route():
@@ -482,6 +591,7 @@ def add_country_route():
         db.session.add(new_country)
         db.session.commit()
         return jsonify({
+            'id': new_country.id,
             'name': new_country.name,
             'symbol': new_country.symbol,
             'logo': new_country.logo,
