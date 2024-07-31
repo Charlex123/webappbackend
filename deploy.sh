@@ -67,10 +67,10 @@ server {
 
     location / {
         proxy_pass http://54.161.105.37/:8080;
-        proxy_set_header Host ${host};
-        proxy_set_header X-Real-IP ${remote_addr};
-        proxy_set_header X-Forwarded-For ${proxy_add_x_forwarded_for};
-        proxy_set_header X-Forwarded-Proto ${scheme};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     access_log /var/log/nginx/access_log;
@@ -85,12 +85,12 @@ server {
 }
 
 server {
-    if (${host} = www.webappbackend.fifareward.io) {
-        return 301 https://${host}${request_uri};
+    if ($host = www.webappbackend.fifareward.io) {
+        return 301 https://$host$request_uri;
     }
 
     if (${host} = webappbackend.fifareward.io) {
-        return 301 https://${host}${request_uri};
+        return 301 https://$host$request_uri;
     }
 
     listen 80;
