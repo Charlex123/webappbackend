@@ -7,16 +7,8 @@ EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
-# Export environment variables passed as arguments
-export ENV=$1
-export POSTGRES_USER=$2
-export POSTGRES_PASSWORD=$3
-export POSTGRES_DB=$4
-export DATABASE_URL=$5
-export BOT_TOKEN=$6
-export CLOUDINARY_API_KEY=$7
-export CLOUDINARY_SECRET_KEY=$8
-export CLOUD_NAME=$9
+# Load environment variables from .env file
+source .env
 
 echo "Deleting old app"
 sudo rm -rf ${APP_DIR}
@@ -32,25 +24,15 @@ sudo chown -R ec2-user:ec2-user ${APP_DIR}
 
 cd ${APP_DIR}
 
-echo "Creating .env file"
-cat << EOF > .env
-ENV=${ENV}
-POSTGRES_USER=${POSTGRES_USER}
-POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-POSTGRES_DB=${POSTGRES_DB}
-DATABASE_URL=${DATABASE_URL}
-BOT_TOKEN=${BOT_TOKEN}
-CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
-CLOUD_NAME=${CLOUD_NAME}
-EOF
-
 echo "Installing application dependencies from requirements.txt"
 sudo yum install -y python3-pip  # Ensure pip is installed
 sudo pip3 install virtualenv
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+echo "Ensuring urllib3 is installed"
+pip install urllib3
 
 if command -v nginx > /dev/null; then
     echo "Uninstalling Nginx"
