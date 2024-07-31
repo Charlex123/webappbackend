@@ -6,11 +6,11 @@ APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
-$host
-$remote_addr
-$request_uri
-$proxy_add_x_forwarded_for
-$scheme
+$host="$host"
+$remote_addr="$remote_addr"
+$request_uri="$request_uri"
+$proxy_add_x_forwarded_for="$proxy_add_x_forwarded_for"
+$scheme="$scheme"
 
 
 echo "Deleting old app"
@@ -66,7 +66,7 @@ server {
     server_name webappbackend.fifareward.io www.webappbackend.fifareward.io;
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://54.161.105.37/:8080;
         proxy_set_header Host ${host};
         proxy_set_header X-Real-IP ${remote_addr};
         proxy_set_header X-Forwarded-For ${proxy_add_x_forwarded_for};
