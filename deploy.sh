@@ -59,46 +59,10 @@ if sudo lsof -i :80 > /dev/null; then
     sudo kill $(sudo lsof -t -i :80)
 fi
 
-NGINX_CONF="/etc/nginx/conf.d/webappbackend.fifareward.io.conf"
-echo "Creating Nginx reverse proxy configuration"
-sudo bash -c "cat > ${NGINX_CONF} <<EOF
-server {
-    server_name webappbackend.fifareward.io www.webappbackend.fifareward.io;
+echo "Creating Nginx configuration from template"
+export DOLLAR='$'
+envsubst < ./configs/nginx/nginx.conf.template > /etc/nginx/conf.d/webappbackend.fifareward.io.conf
 
-    location / {
-        proxy_pass http://54.161.105.37/:8080;
-        proxy_set_header Host '\$host';
-        proxy_set_header X-Real-IP '\$remote_addr';
-        proxy_set_header X-Forwarded-For '\$proxy_add_x_forwarded_for';
-        proxy_set_header X-Forwarded-Proto '\$scheme';
-    }
-
-    access_log /var/log/nginx/access_log;
-    error_log /var/log/nginx/error_log;
-
-    listen [::]:443 ssl ipv6only=on;
-    listen 443 ssl;
-    ssl_certificate /etc/letsencrypt/live/webappbackend.fifareward.io/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/webappbackend.fifareward.io/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-}
-
-server {
-    if ('\$host' = www.webappbackend.fifareward.io) {
-        return 301 https://'\$host\$request_uri';
-    }
-
-    if ('\$host' = webappbackend.fifareward.io) {
-        return 301 https://'\$host\$request_uri';
-    }
-
-    listen 80;
-    listen [::]:80;
-    server_name webappbackend.fifareward.io www.webappbackend.fifareward.io;
-    return 404;
-}
-EOF"
 
 echo "Testing Nginx configuration"
 sudo nginx -t
