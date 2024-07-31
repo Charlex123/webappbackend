@@ -98,7 +98,7 @@ jobs:
           CLOUDINARY_SECRET_KEY: ${{ secrets.CLOUDINARY_SECRET_KEY }}
           CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cat << EOF > /home/${{ secrets.EC2_USER }}/flaskapp/.env
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cat << 'EOF' > /home/${{ secrets.EC2_USER }}/flaskapp/.env
           ENV=${{ secrets.ENV }}
           POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
@@ -111,4 +111,8 @@ jobs:
           EOF"
 
       - name: Run Bash Script To Deploy App 🚀
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/${{ secrets.EC2_USER }}/flaskapp/dep
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh && /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh"
+
+      - name: Clean up SSH key 🚀
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
