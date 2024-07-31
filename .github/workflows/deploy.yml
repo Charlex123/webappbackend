@@ -88,10 +88,17 @@ jobs:
 
       - name: Run Bash Script To Deploy App 🚀
         env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USERNAME: ${{ secrets.EC2_USER }}
+          ENV: ${{ secrets.ENV }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_SECRET_KEY: ${{ secrets.CLOUDINARY_SECRET_KEY }}
+          CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh && /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh ${{ secrets.ENV }} ${{ secrets.POSTGRES_USER }} ${{ secrets.POSTGRES_PASSWORD }} ${{ secrets.POSTGRES_DB }} ${{ secrets.DATABASE_URL }} ${{ secrets.BOT_TOKEN }} ${{ secrets.CLOUDINARY_API_KEY }} ${{ secrets.CLOUDINARY_SECRET_KEY }} ${{ secrets.CLOUD_NAME }}"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh && /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh $ENV $POSTGRES_USER $POSTGRES_PASSWORD $POSTGRES_DB $DATABASE_URL $BOT_TOKEN $CLOUDINARY_API_KEY $CLOUDINARY_SECRET_KEY $CLOUD_NAME"
 
       - name: Clean up SSH key 🚀
         if: always()

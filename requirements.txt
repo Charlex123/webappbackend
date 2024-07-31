@@ -1,6 +1,7 @@
 pyTelegramBotAPI
 gunicorn
 flask
+urllib3
 cloudinary
 python-dotenv
 Flask-SQLAlchemy
