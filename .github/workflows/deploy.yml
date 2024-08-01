@@ -88,7 +88,6 @@ jobs:
 
       - name: Create .env file on remote server 🌍
         env:
-          ENV: ${{ secrets.ENV }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
@@ -99,7 +98,6 @@ jobs:
           CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cat << 'EOF' > /home/${{ secrets.EC2_USER }}/flaskapp/.env
-          ENV=${{ secrets.ENV }}
           POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB=${{ secrets.POSTGRES_DB }}
@@ -109,6 +107,28 @@ jobs:
           CLOUDINARY_SECRET_KEY=${{ secrets.CLOUDINARY_SECRET_KEY }}
           CLOUD_NAME=${{ secrets.CLOUD_NAME }}
           EOF"
+
+      - name: Set environment variables on remote server 🌍
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_SECRET_KEY: ${{ secrets.CLOUDINARY_SECRET_KEY }}
+          CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+          echo export POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> /etc/profile
+          echo export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> /etc/profile
+          echo export POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> /etc/profile
+          echo export DATABASE_URL=${{ secrets.DATABASE_URL }} >> /etc/profile
+          echo export BOT_TOKEN=${{ secrets.BOT_TOKEN }} >> /etc/profile
+          echo export CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} >> /etc/profile
+          echo export CLOUDINARY_SECRET_KEY=${{ secrets.CLOUDINARY_SECRET_KEY }} >> /etc/profile
+          echo export CLOUD_NAME=${{ secrets.CLOUD_NAME }} >> /etc/profile
+          "
 
       - name: Run Bash Script To Deploy App 🚀
         run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh && /home/${{ secrets.EC2_USER }}/flaskapp/deploy.sh"

@@ -29,7 +29,6 @@ fi
 
 echo "Creating .env file"
 cat << EOF > .env
-ENV=${ENV}
 POSTGRES_USER=${POSTGRES_USER}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 POSTGRES_DB=${POSTGRES_DB}
@@ -40,6 +39,9 @@ CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
 CLOUD_NAME=${CLOUD_NAME}
 EOF
 
+echo "Exporting environment variables"
+source /etc/profile
+
 echo "Installing application dependencies from requirements.txt"
 sudo yum install -y python3-pip  # Ensure pip is installed
 sudo pip3 install virtualenv
@@ -49,6 +51,12 @@ pip install -r requirements.txt
 
 echo "Ensuring urllib3 is installed"
 pip install urllib3
+
+echo "Installing Alembic for migrations"
+pip install alembic
+
+echo "Running database migrations"
+alembic upgrade head
 
 if command -v nginx > /dev/null; then
     echo "Uninstalling Nginx"
