@@ -21,12 +21,6 @@ sudo chown -R ec2-user:ec2-user ${APP_DIR}
 
 cd ${APP_DIR}
 
-if [ -f .env ]; then
-  echo ".env file exists"
-else
-  echo ".env file does not exist"
-fi
-
 echo "Creating .env file"
 cat << EOF > .env
 POSTGRES_USER=${POSTGRES_USER}
