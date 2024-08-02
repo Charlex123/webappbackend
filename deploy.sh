@@ -37,10 +37,10 @@ echo "Exporting environment variables"
 source /etc/profile
 
 echo "Installing application dependencies from requirements.txt"
-sudo yum install -y python3-pip  # Ensure pip is installed
-sudo pip3 install virtualenv
-virtualenv venv
+
+python3 -m venv venv
 source venv/bin/activate
+sudo yum install -y python3-pip  # Ensure pip is installed
 pip install -r requirements.txt
 
 echo "Ensuring urllib3 is installed"

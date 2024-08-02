@@ -16,7 +16,7 @@ COPY . .
 
 # Install any needed packages specified in requirements.txt
 RUN python -m venv venv
-
+RUN source venv/bin/activate
 RUN pip install --upgrade pip
 # Activate the virtual environment and install dependencies
 RUN /venv/bin/pip install -r requirements.txt
