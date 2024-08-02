@@ -15,7 +15,7 @@ WORKDIR /
 COPY . .
 
 # Install any needed packages specified in requirements.txt
-RUN python -m venv venv
+RUN python3 -m venv venv
 RUN source venv/bin/activate
 RUN pip install --upgrade pip
 # Activate the virtual environment and install dependencies
