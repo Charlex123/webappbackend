@@ -46,12 +46,6 @@ pip install -r requirements.txt
 echo "Ensuring urllib3 is installed"
 pip install urllib3
 
-echo "Installing Alembic for migrations"
-pip install alembic
-
-echo "Running database migrations"
-alembic upgrade head
-
 if command -v nginx > /dev/null; then
     echo "Uninstalling Nginx"
     sudo yum remove -y nginx
