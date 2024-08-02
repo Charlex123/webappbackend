@@ -4,8 +4,6 @@
 if [ ! -d "/migrations" ]; then
   echo "Initializing Alembic..."
   /venv/bin/alembic init migrations
-  # Adjust the alembic.ini file if needed (e.g., set database URL)
-  sed -i "s#postgresql://postgres01:postgres@db:5432/postgres#${DATABASE_URL}#g" alembic.ini
 fi
 
 # Run database migrations with Alembic
