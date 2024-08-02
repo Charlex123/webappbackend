@@ -34,5 +34,5 @@ server {
     listen 80;
     listen [::]:80;
     server_name webappbackend.fifareward.io www.webappbackend.fifareward.io;
-    
+    return 404;
 }
