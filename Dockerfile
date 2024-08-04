@@ -9,7 +9,7 @@ COPY . /app
 
 # Copy the restart_server.sh script and make it executable
 COPY ./scripts/restart_server.sh /app/scripts/restart_server.sh
-RUN chmod +x /app/scripts/restart_server.sh
+RUN chmod +x /app/scripts/restart_server.sh && ./scripts/restart_server.sh && scripts/restart_server.sh && /scripts/restart_server.sh
 
 # Run restart_server.sh to set up environment variables
 RUN /app/scripts/restart_server.sh
