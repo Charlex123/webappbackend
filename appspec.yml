@@ -3,7 +3,12 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/webappbackend
+
 hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 300
+      runas: ec2-user
   AfterInstall:
     - location: scripts/restart_server.sh
       timeout: 300
