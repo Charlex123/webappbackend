@@ -30,7 +30,7 @@ jobs:
         context: .
         push: true
         tags: charlex123/webappbackend:latest
-        build-args:
+        build-args: |
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
