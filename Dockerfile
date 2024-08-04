@@ -7,6 +7,20 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
+# Copy the restart_server.sh script and make it executable
+COPY ./scripts/restart_server.sh /app/scripts/restart_server.sh
+RUN chmod +x /app/scripts/restart_server.sh
+
+# Run restart_server.sh to set up environment variables
+RUN /app/scripts/restart_server.sh
+
+# Copy the environment variables script
+COPY ./etc/profile.d/webappbackend_env.sh /etc/profile.d/webappbackend_env.sh
+
+# Run setup script to initialize Alembic and virtual environment
+COPY ./scripts/setup.sh /app/scripts/setup.sh
+RUN chmod +x /app/scripts/setup.sh && /app/scripts/setup.sh
+
 # Expose port 5000 for Flask
 EXPOSE 5000
 
