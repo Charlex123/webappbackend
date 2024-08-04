@@ -26,3 +26,11 @@ docker-compose.yml
 # Ignore miscellaneous files
 .DS_Store
 *.swp
+
+# Ignore the setup_environment.sh script
+setup_environment.sh
+
+# Other ignored files and directories
+__pycache__/
+*.pyc
+.env

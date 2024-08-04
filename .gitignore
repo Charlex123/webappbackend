@@ -3,3 +3,11 @@ env
 env.local
 .env.local
 venv
+
+# Ignore the setup_environment.sh script
+setup_environment.sh
+
+# Other ignored files and directories
+__pycache__/
+*.pyc
+.env
