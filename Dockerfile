@@ -9,17 +9,14 @@ COPY . /app
 
 # Copy the restart_server.sh script and make it executable
 COPY ./scripts/restart_server.sh /app/scripts/restart_server.sh
-RUN chmod +x /app/scripts/restart_server.sh && ./scripts/restart_server.sh && scripts/restart_server.sh && /scripts/restart_server.sh
+RUN chmod +x /app/scripts/restart_server.sh
 
 # Run restart_server.sh to set up environment variables
 RUN /app/scripts/restart_server.sh
 
-# Copy the environment variables script after running restart_server.sh
-COPY ./etc/profile.d/webappbackend_env.sh /etc/profile.d/webappbackend_env.sh
-
-# Run setup script to initialize Alembic and virtual environment
+# Copy the setup script and make it executable
 COPY ./scripts/setup.sh /app/scripts/setup.sh
-RUN chmod +x /app/scripts/setup.sh && /app/scripts/setup.sh
+RUN chmod +x /app/scripts/setup.sh
 
 # Expose port 5000 for Flask
 EXPOSE 5000
@@ -43,9 +40,6 @@ ENV CLOUD_NAME=$CLOUD_NAME
 ENV POSTGRES_USER=$POSTGRES_USER
 ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 ENV POSTGRES_DB=$POSTGRES_DB
-
-# Define environment variable
-ENV NAME webappbackend
 
 # Command to run both app.py and bot.py
 CMD ["sh", "-c", "gunicorn -b 0.0.0.0:5000 app:app & python bot.py"]
