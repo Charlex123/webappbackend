@@ -4,15 +4,17 @@
 ENV_VARS_FILE="/etc/profile.d/webappbackend_env.sh"
 
 # Create or overwrite the custom script to set environment variables
-echo "#!/bin/bash" > $ENV_VARS_FILE
-echo "export DATABASE_URL=${DATABASE_URL} >> $ENV_VARS_FILE
-echo "export BOT_TOKEN=${BOT_TOKEN} >> $ENV_VARS_FILE
-echo "export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}" >> $ENV_VARS_FILE
-echo "export CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}" >> $ENV_VARS_FILE
-echo "export CLOUD_NAME=${CLOUD_NAME}" >> $ENV_VARS_FILE
-echo "export POSTGRES_USER=${POSTGRES_USER}" >> $ENV_VARS_FILE
-echo "export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> $ENV_VARS_FILE
-echo "export POSTGRES_DB=${POSTGRES_DB}" >> $ENV_VARS_FILE
+cat <<EOF > $ENV_VARS_FILE
+#!/bin/bash
+export DATABASE_URL=${DATABASE_URL}
+export BOT_TOKEN=${BOT_TOKEN}
+export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+export CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
+export CLOUD_NAME=${CLOUD_NAME}
+export POSTGRES_USER=${POSTGRES_USER}
+export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+export POSTGRES_DB=${POSTGRES_DB}
+EOF
 
 # Ensure the script is executable
 chmod +x $ENV_VARS_FILE
