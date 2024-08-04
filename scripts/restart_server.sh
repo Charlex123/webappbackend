@@ -14,6 +14,7 @@ echo "export POSTGRES_USER=${POSTGRES_USER}" >> $ENV_VARS_FILE
 echo "export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> $ENV_VARS_FILE
 echo "export POSTGRES_DB=${POSTGRES_DB}" >> $ENV_VARS_FILE
 
+
 # Ensure the script is executable
 chmod +x $ENV_VARS_FILE
 
