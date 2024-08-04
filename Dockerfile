@@ -14,7 +14,7 @@ RUN chmod +x /app/scripts/restart_server.sh
 # Run restart_server.sh to set up environment variables
 RUN /app/scripts/restart_server.sh
 
-# Copy the environment variables script
+# Copy the environment variables script after running restart_server.sh
 COPY ./etc/profile.d/webappbackend_env.sh /etc/profile.d/webappbackend_env.sh
 
 # Run setup script to initialize Alembic and virtual environment
@@ -46,9 +46,6 @@ ENV POSTGRES_DB=$POSTGRES_DB
 
 # Define environment variable
 ENV NAME webappbackend
-
-# Run setup script to initialize Alembic and virtual environment
-RUN chmod +x ./scripts/setup.sh && ./scripts/setup.sh
 
 # Command to run both app.py and bot.py
 CMD ["sh", "-c", "gunicorn -b 0.0.0.0:5000 app:app & python bot.py"]
