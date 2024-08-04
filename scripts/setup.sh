@@ -5,7 +5,8 @@ python -m venv venv
 source venv/bin/activate
 
 # Install required packages
+pip install upgrade pip
 pip install -r requirements.txt
 
 # Initialize Alembic (ensure your alembic.ini is configured)
-alembic upgrade head
+# alembic upgrade head

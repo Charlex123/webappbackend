@@ -17,7 +17,7 @@ fi
 
 # Install PostgreSQL if not already installed
 if ! command_exists psql; then
-  sudo yum install postgresql15.x86_64 postgresql15-server -y
+  sudo yum install -y postgresql postgresql-server postgresql-contrib
   sudo service postgresql initdb
   sudo service postgresql start
 fi
@@ -32,7 +32,7 @@ fi
 sudo mkdir -p /etc/profile.d/
 
 # Create or overwrite the custom script to set environment variables
-cat <<EOT > /etc/profile.d/webappbackend_env.sh
+sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
 export DATABASE_URL=${DATABASE_URL}
 export BOT_TOKEN=${BOT_TOKEN}
 export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
@@ -41,7 +41,7 @@ export CLOUD_NAME=${CLOUD_NAME}
 export POSTGRES_USER=${POSTGRES_USER}
 export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 export POSTGRES_DB=${POSTGRES_DB}
-EOT
+EOT'
 
 # Ensure the script is executable
 sudo chmod +x /etc/profile.d/webappbackend_env.sh
