@@ -68,5 +68,5 @@ jobs:
         aws deploy create-deployment \
           --application-name webappbackend \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --deployment-group-name webappbackend-deployment-group \
+          --deployment-group-name WebAppBackend-DG \
           --github-location repository=charlex123/webappbackend,commitId=${{ github.sha }}
