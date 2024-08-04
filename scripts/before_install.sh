@@ -33,23 +33,23 @@ chmod +x setup_environment.sh
 # Source environment variables
 source ./setup_environment.sh
 
-# Create the directory if it doesn't exist
-sudo mkdir -p /etc/profile.d/
+# # Create the directory if it doesn't exist
+# sudo mkdir -p /etc/profile.d/
 
-# Create or overwrite the custom script to set environment variables
-sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
-export DATABASE_URL=${DATABASE_URL}
-export BOT_TOKEN=${BOT_TOKEN}
-export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-export CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
-export CLOUD_NAME=${CLOUD_NAME}
-export POSTGRES_USER=${POSTGRES_USER}
-export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-export POSTGRES_DB=${POSTGRES_DB}
-EOT'
+# # Create or overwrite the custom script to set environment variables
+# sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
+# export DATABASE_URL=${DATABASE_URL}
+# export BOT_TOKEN=${BOT_TOKEN}
+# export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+# export CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
+# export CLOUD_NAME=${CLOUD_NAME}
+# export POSTGRES_USER=${POSTGRES_USER}
+# export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+# export POSTGRES_DB=${POSTGRES_DB}
+# EOT'
 
-# Ensure the script is executable
-sudo chmod +x /etc/profile.d/webappbackend_env.sh
+# # Ensure the script is executable
+# sudo chmod +x /etc/profile.d/webappbackend_env.sh
 
-# Source the new environment variables for the current session
-source /etc/profile.d/webappbackend_env.sh
+# # Source the new environment variables for the current session
+# source /etc/profile.d/webappbackend_env.sh
