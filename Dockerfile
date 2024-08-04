@@ -1,33 +1,23 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Use the official Python image from the Docker Hub
+FROM python:3.9
 
 # Set the working directory in the container
-WORKDIR /
+WORKDIR /app
 
-# # Install system dependencies
-# RUN apt-get update && apt-get install -y \
-#     gcc \
-#     libpq-dev \
-#     python3-venv \
-#     && rm -rf /var/lib/apt/lists/*
-
-# Copy the current directory contents into the container at /
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN python3 -m venv venv
-RUN source venv/bin/activate
-RUN pip install --upgrade pip
-# Activate the virtual environment and install dependencies
-RUN /venv/bin/pip install -r requirements.txt
-RUN /venv/bin/pip install alembic
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 4000 available to the world outside this container
-EXPOSE 4000
+# Expose port 5000 for Flask
+EXPOSE 5000
 
-# Copy entrypoint script into the container
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Define environment variable
+ENV NAME webappbackend
 
-# Run the entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+# Run setup script to initialize Alembic and virtual environment
+RUN chmod +x ./scripts/setup.sh && ./scripts/setup.sh
+
+# Command to run both app.py and bot.py
+CMD ["sh", "-c", "gunicorn -b 0.0.0.0:5000 app:app & python bot.py"]
