@@ -18,7 +18,7 @@ RUN ./scripts/setup.sh
 EXPOSE 5000
 
 # Define environment variable
-ENV NAME webappbackend
+# ENV NAME webappbackend
 
 # Command to run both app.py and bot.py
 CMD ["sh", "-c", "gunicorn -b 0.0.0.0:5000 app:app & python bot.py"]
