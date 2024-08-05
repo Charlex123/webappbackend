@@ -52,7 +52,7 @@ jobs:
 
       - name: Zip source files excluding .DS_Store
         run: |
-          zip -r webappbackend-${{ github.sha }}.zip . -x "*.DS_Store"
+          zip -r webappbackend.zip . -x "*.DS_Store"
 
       - name: Upload to S3
         run: |
