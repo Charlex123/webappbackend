@@ -21,7 +21,7 @@ then
     sudo yum install -y coreutils
 fi
 
-# Install nginx if nohup is not available
+# Install nginx if nginx is not available
 if ! command -v nginx &> /dev/null
 then
     echo "nginx could not be found. Installing nginx..."
