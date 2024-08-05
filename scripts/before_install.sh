@@ -25,11 +25,3 @@ sudo rm -rf ${APP_DIR}
 
 # sudo rm -rf /opt/codedeploy-agent/deployment-root
 
-echo "Creating app folder"
-sudo mkdir -p ${APP_DIR}
-
-echo "Moving files to app folder"
-sudo cp -r ${EC2_USER_DIR}/* ${APP_DIR}
-
-echo "Setting ownership of app directory"
-sudo chown -R ec2-user:ec2-user ${APP_DIR}

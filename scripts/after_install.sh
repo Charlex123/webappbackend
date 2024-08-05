@@ -1,6 +1,11 @@
 #!/bin/bash
 set -xe
 
+APP_DIR="/var/www/webappbackendapp"
+EC2_USER_DIR="/home/ec2-user/webappbackend"
+DOMAIN="webappbackend.fifareward.io"
+EMAIL="fifarewarddapp@gmail.com"
+
 # Function to check if a command exists
 command_exists () {
   type "$1" &> /dev/null ;
@@ -49,6 +54,14 @@ then
     sudo service postgresql start
 fi
 
+echo "Creating app folder"
+sudo mkdir -p ${APP_DIR}
+
+echo "Moving files to app folder"
+sudo cp -r ${EC2_USER_DIR}/* ${APP_DIR}
+
+echo "Setting ownership of app directory"
+sudo chown -R ec2-user:ec2-user ${APP_DIR}
 
 # Navigate to the webappbackend directory
 cd /home/ec2-user/webappbackend
