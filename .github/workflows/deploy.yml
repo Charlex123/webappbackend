@@ -56,7 +56,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp ${{ secrets.AWS_BUCKET_LINK }}
+          aws s3 cp webappbackend.zip s3://${{ secrets.AWS_BUCKET_NAME }}/webappbackend.zip --acl bucket-owner-full-control --exact-timestamps
 
   deploy:
     needs: upload_to_s3
