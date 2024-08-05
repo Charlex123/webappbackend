@@ -28,10 +28,10 @@ if ! command_exists docker-compose; then
   sudo chmod +x /usr/local/bin/docker-compose
 fi
 
-chmod +x setup_environment.sh
+# chmod +x setup_environment.sh
 
 # Source environment variables
-source ./setup_environment.sh
+# source ./setup_environment.sh
 
 # # Create the directory if it doesn't exist
 # sudo mkdir -p /etc/profile.d/
