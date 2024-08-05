@@ -67,15 +67,12 @@ sudo chown -R ec2-user:ec2-user ${APP_DIR}
 cd /home/ec2-user/webappbackend
 
 # Install virtualenv if not already installed
-if ! command -v virtualenv &> /dev/null
+if ! command -v venv &> /dev/null
 then
-    echo "virtualenv could not be found. Installing virtualenv..."
-    sudo pip3 install virtualenv
+    # Create and activate a virtual environment
+    python3 -m venv venv
+    source venv/bin/activate
 fi
-
-# Create and activate a virtual environment
-python3 -m venv venv
-source venv/bin/activate
 
 # Upgrade pip and install required packages
 pip install --upgrade pip
