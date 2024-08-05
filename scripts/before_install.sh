@@ -8,8 +8,6 @@ EC2_USER_DIR="/home/ec2-user/webappbackend"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
-sudo service codedeploy-agent stop
-
 # Update packages
 sudo yum update -y
 
@@ -23,9 +21,9 @@ fi
 echo "Deleting old app"
 sudo rm -rf ${APP_DIR}
 
-echo "deleting old codedeploy-agent details"
+# echo "deleting old codedeploy-agent details"
 
-sudo rm -rf /opt/codedeploy-agent/deployment-root
+# sudo rm -rf /opt/codedeploy-agent/deployment-root
 
 echo "Creating app folder"
 sudo mkdir -p ${APP_DIR}
