@@ -3,7 +3,7 @@ env
 env.local
 .env.local
 venv
-
+deploy.sh
 .DS_Store
 # Ignore the setup_environment.sh script
 setup_environment.sh

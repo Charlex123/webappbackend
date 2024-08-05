@@ -8,6 +8,9 @@ EC2_USER_DIR="/home/ec2-user/webappbackend"
 DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
+#  Remove existing files that may cause conflicts
+sudo rm -f /home/ec2-user/webappbackend/
+
 # Update packages
 sudo yum -y update
 sudo yum -y install ruby
