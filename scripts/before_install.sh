@@ -13,12 +13,6 @@ sudo rm -f /home/ec2-user/webappbackend/
 
 # Update packages
 sudo yum -y update
-sudo yum -y install ruby
-sudo yum -y install wget
-cd /home/ec2-user
-wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install
-sudo chmod +x ./install
-sudo ./install auto
 
 # Install coreutils if nohup is not available
 if ! command -v unzip &> /dev/null
