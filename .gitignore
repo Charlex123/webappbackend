@@ -4,6 +4,7 @@ env.local
 .env.local
 venv
 
+.DS_Store
 # Ignore the setup_environment.sh script
 setup_environment.sh
 
