@@ -4,6 +4,7 @@ flask
 urllib3
 alembic
 cloudinary
+awscli
 python-dotenv
 Flask-SQLAlchemy
 psycopg2-binary
