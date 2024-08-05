@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -50,26 +50,30 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Zip source files
+        run: |
+          zip -r webappbackend.zip .
+
       - name: Upload to S3
         run: |
-          aws s3 sync . s3://${{secrets.S3_BUCKET_URI}}/ --delete
+          aws s3 cp webappbackend.zip s3://codepipeline-us-east-1-560541587028/webappbackend.zip
 
   deploy:
     needs: upload_to_s3
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{secrets.AWS_REGION}}
+          aws-region: us-east-1
 
       - name: Create deployment
         run: |
           aws deploy create-deployment \
-            --application-name ${{secrets.AWS_DEPLOY_APP_NAME}} \
+            --application-name ${{ secrets.AWS_DEPLOY_APP_NAME }} \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name ${{secrets.AWS_DEPLOYMENT_GROUP}} \
+            --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP }} \
             --description "WebApp Backend" \
-            --s3-location "bucket=${{secrets.S3_BUCKET}}, key=webappbackend.zip, bundleType=zip"
+            --s3-location bucket=codepipeline-us-east-1-560541587028,key=webappbackend.zip,bundleType=zip
