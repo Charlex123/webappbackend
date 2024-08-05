@@ -8,33 +8,70 @@ command_exists () {
 # Update packages
 sudo yum update -y
 
-# Install Docker if not already installed
-if ! command_exists docker; then
-  sudo yum install -y docker
-  sudo service docker start
-  sudo usermod -a -G docker ec2-user
+# Install coreutils if nohup is not available
+if ! command -v nohup &> /dev/null
+then
+    echo "nohup could not be found. Installing coreutils..."
+    sudo yum install -y coreutils
 fi
 
-# Install PostgreSQL if not already installed
-if ! command_exists psql; then
-  sudo yum install -y postgresql postgresql-server postgresql-contrib
-  sudo service postgresql initdb
-  sudo service postgresql start
+# Install coreutils if nohup is not available
+if ! command -v unzip &> /dev/null
+then
+    echo "unzip could not be found. Installing coreutils..."
+    sudo yum install -y unzip
+fi
+
+# Install nginx if nohup is not available
+if ! command -v nginx &> /dev/null
+then
+    echo "nginx could not be found. Installing nginx..."
+    sudo yum install -y nginx
+fi
+
+# Install Docker if not already installed
+if ! command -v docker &> /dev/null
+then
+    echo "Docker could not be found. Installing Docker..."
+    sudo yum install -y docker
+    sudo service docker start
+    sudo usermod -a -G docker ec2-user
 fi
 
 # Install Docker Compose if not already installed
-if ! command_exists docker-compose; then
-  sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
+if ! command -v docker-compose &> /dev/null
+then
+    echo "Docker Compose could not be found. Installing Docker Compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
 fi
 
-# chmod +x setup_environment.sh
+# Install PostgreSQL if not already installed
+if ! command -v psql &> /dev/null
+then
+    echo "PostgreSQL could not be found. Installing PostgreSQL..."
+    sudo yum install -y ppostgresql15.x86_64 postgresql15-server
+    sudo service postgresql initdb
+    sudo service postgresql start
+fi
 
-# Source environment variables
-# source ./setup_environment.sh
+# Install virtualenv if not already installed
+if ! command -v virtualenv &> /dev/null
+then
+    echo "virtualenv could not be found. Installing virtualenv..."
+    sudo pip3 install virtualenv
+fi
 
-# # Create the directory if it doesn't exist
-# sudo mkdir -p /etc/profile.d/
+# Navigate to the webappbackend directory
+cd /home/ec2-user/webappbackend
+
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Upgrade pip and install required packages
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # # Create or overwrite the custom script to set environment variables
 # sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
