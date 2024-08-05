@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 
 APP_DIR="/var/www/flaskapp"
 EC2_USER_DIR="/home/ec2-user/flaskapp"

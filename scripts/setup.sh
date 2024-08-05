@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xe
 
 # Create and activate virtual environment
 python -m venv venv

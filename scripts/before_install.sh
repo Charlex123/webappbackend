@@ -1,19 +1,17 @@
 #!/bin/bash
 
-# Function to check if a command exists
-command_exists () {
-  type "$1" &> /dev/null ;
-}
+set -xe
+
+
+APP_DIR="/var/www/webappbackendapp"
+EC2_USER_DIR="/home/ec2-user/webappbackend"
+DOMAIN="webappbackend.fifareward.io"
+EMAIL="fifarewarddapp@gmail.com"
+
+sudo service codedeploy-agent stop
 
 # Update packages
 sudo yum update -y
-
-# Install coreutils if nohup is not available
-if ! command -v nohup &> /dev/null
-then
-    echo "nohup could not be found. Installing coreutils..."
-    sudo yum install -y coreutils
-fi
 
 # Install coreutils if nohup is not available
 if ! command -v unzip &> /dev/null
@@ -22,71 +20,18 @@ then
     sudo yum install -y unzip
 fi
 
-# Install nginx if nohup is not available
-if ! command -v nginx &> /dev/null
-then
-    echo "nginx could not be found. Installing nginx..."
-    sudo yum install -y nginx
-fi
+echo "Deleting old app"
+sudo rm -rf ${APP_DIR}
 
-# Install Docker if not already installed
-if ! command -v docker &> /dev/null
-then
-    echo "Docker could not be found. Installing Docker..."
-    sudo yum install -y docker
-    sudo service docker start
-    sudo usermod -a -G docker ec2-user
-fi
+echo "deleting old codedeploy-agent details"
 
-# Install Docker Compose if not already installed
-if ! command -v docker-compose &> /dev/null
-then
-    echo "Docker Compose could not be found. Installing Docker Compose..."
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-fi
+sudo rm -rf /opt/codedeploy-agent/deployment-root
 
-# Install PostgreSQL if not already installed
-if ! command -v psql &> /dev/null
-then
-    echo "PostgreSQL could not be found. Installing PostgreSQL..."
-    sudo yum install -y ppostgresql15.x86_64 postgresql15-server
-    sudo service postgresql initdb
-    sudo service postgresql start
-fi
+echo "Creating app folder"
+sudo mkdir -p ${APP_DIR}
 
-# Install virtualenv if not already installed
-if ! command -v virtualenv &> /dev/null
-then
-    echo "virtualenv could not be found. Installing virtualenv..."
-    sudo pip3 install virtualenv
-fi
+echo "Moving files to app folder"
+sudo cp -r ${EC2_USER_DIR}/* ${APP_DIR}
 
-# Navigate to the webappbackend directory
-cd /home/ec2-user/webappbackend
-
-# Create and activate a virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Upgrade pip and install required packages
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# # Create or overwrite the custom script to set environment variables
-# sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
-# export DATABASE_URL=${DATABASE_URL}
-# export BOT_TOKEN=${BOT_TOKEN}
-# export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-# export CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
-# export CLOUD_NAME=${CLOUD_NAME}
-# export POSTGRES_USER=${POSTGRES_USER}
-# export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-# export POSTGRES_DB=${POSTGRES_DB}
-# EOT'
-
-# # Ensure the script is executable
-# sudo chmod +x /etc/profile.d/webappbackend_env.sh
-
-# # Source the new environment variables for the current session
-# source /etc/profile.d/webappbackend_env.sh
+echo "Setting ownership of app directory"
+sudo chown -R ec2-user:ec2-user ${APP_DIR}

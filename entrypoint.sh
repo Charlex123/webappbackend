@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -xe
+
 # Initialize Alembic if not already initialized
 if [ ! -d "/migrations" ]; then
   echo "Initializing Alembic..."

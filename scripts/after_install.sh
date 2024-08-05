@@ -1,28 +1,90 @@
 #!/bin/bash
+set -xe
 
-# Source the environment variables
-source /etc/profile.d/webappbackend_env.sh
+# Function to check if a command exists
+command_exists () {
+  type "$1" &> /dev/null ;
+}
 
-# Navigate to the project directory
+# Update packages
+sudo yum update -y
+
+# Install coreutils if nohup is not available
+if ! command -v nohup &> /dev/null
+then
+    echo "nohup could not be found. Installing coreutils..."
+    sudo yum install -y coreutils
+fi
+
+# Install nginx if nohup is not available
+if ! command -v nginx &> /dev/null
+then
+    echo "nginx could not be found. Installing nginx..."
+    sudo yum install -y nginx
+fi
+
+# Install Docker if not already installed
+if ! command -v docker &> /dev/null
+then
+    echo "Docker could not be found. Installing Docker..."
+    sudo yum install -y docker
+    sudo service docker start
+    sudo usermod -a -G docker ec2-user
+fi
+
+# Install Docker Compose if not already installed
+if ! command -v docker-compose &> /dev/null
+then
+    echo "Docker Compose could not be found. Installing Docker Compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+fi
+
+# Install PostgreSQL if not already installed
+if ! command -v psql &> /dev/null
+then
+    echo "PostgreSQL could not be found. Installing PostgreSQL..."
+    sudo yum install -y ppostgresql15.x86_64 postgresql15-server
+    sudo service postgresql initdb
+    sudo service postgresql start
+fi
+
+
+# Navigate to the webappbackend directory
 cd /home/ec2-user/webappbackend
+
+# Install virtualenv if not already installed
+if ! command -v virtualenv &> /dev/null
+then
+    echo "virtualenv could not be found. Installing virtualenv..."
+    sudo pip3 install virtualenv
+fi
+
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Upgrade pip and install required packages
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # alembic upgrade head
 
-# Restart Docker services
-docker-compose down
-docker-compose up -d --build
+# # Create or overwrite the custom script to set environment variables
+# sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
+# export DATABASE_URL=${DATABASE_URL}
+# export BOT_TOKEN=${BOT_TOKEN}
+# export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+# export CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY}
+# export CLOUD_NAME=${CLOUD_NAME}
+# export POSTGRES_USER=${POSTGRES_USER}
+# export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+# export POSTGRES_DB=${POSTGRES_DB}
+# EOT'
 
-# Restart Nginx
-sudo service nginx restart
+# # Ensure the script is executable
+# sudo chmod +x /etc/profile.d/webappbackend_env.sh
 
+# # Source the new environment variables for the current session
+# source /etc/profile.d/webappbackend_env.sh
 
-if pgrep -f "bot.py" > /dev/null; then
-    echo "Stopping existing bot.py process"
-    pkill -f "bot.py"
-fi
-
-echo "Starting Gunicorn"
-sudo venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5000 app:app --daemon
-
-
-echo "Starting bot.py"
