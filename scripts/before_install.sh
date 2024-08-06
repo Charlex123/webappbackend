@@ -9,7 +9,7 @@ DOMAIN="webappbackend.fifareward.io"
 EMAIL="fifarewarddapp@gmail.com"
 
 #  Remove existing files that may cause conflicts
-sudo rm -f /home/ec2-user/webappbackend/
+sudo rm -rf /home/ec2-user/webappbackend
 
 # Update packages
 sudo yum -y update
