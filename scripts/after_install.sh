@@ -63,6 +63,9 @@ sudo cp -r ${EC2_USER_DIR}/* ${APP_DIR}
 echo "Setting ownership of app directory"
 sudo chown -R ec2-user:ec2-user ${APP_DIR}
 
+# Ensure the ec2-user has ownership of the directory
+sudo chown -R ec2-user:ec2-user /home/ec2-user/webappbackend
+
 # Navigate to the webappbackend directory
 cd /home/ec2-user/webappbackend
 
