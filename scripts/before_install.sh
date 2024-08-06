@@ -19,8 +19,6 @@ cd /home/ec2-user
 # wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install
 # sudo chmod +x ./install
 # sudo ./install auto
-# Ensure the ec2-user has ownership of the directory
-sudo chown -R ec2-user:ec2-user /home/ec2-user/webappbackend
 
 # Install Docker if not already installed
 if ! command -v docker &> /dev/null; then
