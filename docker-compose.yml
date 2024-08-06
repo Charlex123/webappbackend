@@ -24,7 +24,7 @@ services:
     image: charlex123/webappbackend:latest
     build:
       context: .
-    command: python bot.py
+    command: python3 bot.py
     environment:
       DATABASE_URL: ${DATABASE_URL}
       BOT_TOKEN: ${BOT_TOKEN}
@@ -52,6 +52,6 @@ services:
       - ./nginx/webappbackend.conf:/etc/nginx/conf.d/webappbackend.conf
     depends_on:
       - web
-      
+
 volumes:
   pgdata:
