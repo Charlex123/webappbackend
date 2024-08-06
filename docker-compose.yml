@@ -42,11 +42,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
-
-
+  
   nginx:
     image: nginx:latest
     ports:
@@ -56,3 +52,6 @@ volumes:
       - ./nginx/webappbackend.conf:/etc/nginx/conf.d/webappbackend.conf
     depends_on:
       - web
+      
+volumes:
+  pgdata:
