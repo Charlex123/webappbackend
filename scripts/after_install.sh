@@ -81,7 +81,7 @@ fi
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# alembic upgrade head
+alembic upgrade head
 
 # # Create or overwrite the custom script to set environment variables
 # sudo bash -c 'cat <<EOT > /etc/profile.d/webappbackend_env.sh
