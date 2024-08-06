@@ -8,11 +8,11 @@ WORKDIR /app
 COPY . /app
 
 # Copy the setup.sh script and make it executable
-COPY ./scripts/setup.sh /app/scripts/setup.sh
-RUN chmod +x /app/scripts/setup.sh
+# COPY ./scripts/setup.sh /app/scripts/setup.sh
+# RUN chmod +x /app/scripts/setup.sh
 
 # Run setup script to initialize Alembic and virtual environment
-RUN ./scripts/setup.sh
+# RUN ./scripts/setup.sh
 
 # Expose port 5000 for Flask
 EXPOSE 5000
