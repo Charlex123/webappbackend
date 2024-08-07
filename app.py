@@ -618,40 +618,47 @@ def update_testnet(chat_id):
 
 @app.route('/api/users/adduser', methods=['POST'])
 def add_user_route():
-    data = request.get_json()
-    existing_user = User.query.filter_by(chat_id=data['chat_id']).first()
-    if existing_user:
-        return jsonify({
-            'chat_id': existing_user.chat_id,
-            'multiplier': existing_user.multiplier,
-            'totalpoints': existing_user.totalpoints,
-            'dailypoints': existing_user.dailypoints,
-            'dailypointscounter': existing_user.dailypointscounter,
-            'exchange': existing_user.exchange,
-            'level': existing_user.level,
-            'levelpoint': existing_user.levelpoint,
-            'ref_count': existing_user.ref_count,
-            'referral_link': existing_user.referral_link
-        }), 200
-    referral_link = f"https://t.me/{bot_username}?start={data['chat_id']}"
-    new_user = User(
-        chat_id=data['chat_id'], 
-        referral_link=referral_link,
-    )
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({
-        'chat_id': new_user.chat_id,
-        'exchange': new_user.exchange,
-        'multiplier': new_user.multiplier,
-        'totalpoints': new_user.totalpoints,
-        'dailypoints': new_user.dailypoints,
-        'dailypointscounter': new_user.dailypointscounter,
-        'level': new_user.level,
-        'levelpoint': new_user.levelpoint,
-        'ref_count': new_user.ref_count,
-        'referral_link': new_user.referral_link
-    }), 201
+    try:
+        data = request.get_json()
+        existing_user = User.query.filter_by(chat_id=data['chat_id']).first()
+        if existing_user:
+            return jsonify({
+                'chat_id': existing_user.chat_id,
+                'multiplier': existing_user.multiplier,
+                'totalpoints': existing_user.totalpoints,
+                'dailypoints': existing_user.dailypoints,
+                'dailypointscounter': existing_user.dailypointscounter,
+                'exchange': existing_user.exchange,
+                'level': existing_user.level,
+                'levelpoint': existing_user.levelpoint,
+                'ref_count': existing_user.ref_count,
+                'referral_link': existing_user.referral_link
+            }), 200
+            
+        else:
+            referral_link = f"https://t.me/{bot_username}?start={data['chat_id']}"
+            new_user = User(
+                chat_id=data['chat_id'], 
+                referral_link=referral_link,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({
+                'chat_id': new_user.chat_id,
+                'exchange': new_user.exchange,
+                'multiplier': new_user.multiplier,
+                'totalpoints': new_user.totalpoints,
+                'dailypoints': new_user.dailypoints,
+                'dailypointscounter': new_user.dailypointscounter,
+                'level': new_user.level,
+                'levelpoint': new_user.levelpoint,
+                'ref_count': new_user.ref_count,
+                'referral_link': new_user.referral_link
+            }), 201
+    except Exception as e:
+        logger.error(f"Error adding new user: {e}")
+        return jsonify({'message': 'Internal Server Error'}), 500
+    
 
 @app.route('/')
 def index():

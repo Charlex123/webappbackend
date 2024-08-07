@@ -12,7 +12,6 @@ if pgrep -f "bot.py" > /dev/null; then
     pkill -f "bot.py"
 fi
 
-# Restart Docker services
-docker-compose down
-docker-compose up -d --build
-
+# Start the web server and bot script
+nohup gunicorn -b 0.0.0.0:5000 app:app &
+nohup python3 bot.py &

@@ -20,19 +20,19 @@ cd /home/ec2-user
 # sudo chmod +x ./install
 # sudo ./install auto
 
-# Install Docker if not already installed
-if ! command -v docker &> /dev/null; then
-  sudo yum install -y docker
-  sudo service docker start
-  sudo usermod -a -G docker ec2-user
-fi
+# # Install Docker if not already installed
+# if ! command -v docker &> /dev/null; then
+#   sudo yum install -y docker
+#   sudo service docker start
+#   sudo usermod -a -G docker ec2-user
+# fi
 
-# Install Docker Compose if not already installed
-if ! command -v docker-compose &> /dev/null; then
-  sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
-  sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-fi
+# # Install Docker Compose if not already installed
+# if ! command -v docker-compose &> /dev/null; then
+#   sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#   sudo chmod +x /usr/local/bin/docker-compose
+#   sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+# fi
 
 # Install coreutils if nohup is not available
 if ! command -v unzip &> /dev/null

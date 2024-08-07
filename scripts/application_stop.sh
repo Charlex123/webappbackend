@@ -6,5 +6,3 @@ set -xe
 sudo systemctl start codedeploy-agent
 
 cd /home/ec2-user/webappbackend
-
-docker-compose down

@@ -43,15 +43,15 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
   
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/webappbackend.conf:/etc/nginx/conf.d/webappbackend.conf
-    depends_on:
-      - web
+  # nginx:
+  #   image: nginx:latest
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/webappbackend.conf:/etc/nginx/conf.d/webappbackend.conf
+  #   depends_on:
+  #     - web
 
 volumes:
   pgdata:

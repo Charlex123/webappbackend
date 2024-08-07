@@ -28,22 +28,6 @@ then
     sudo yum install -y nginx
 fi
 
-# Install Docker if not already installed
-if ! command -v docker &> /dev/null
-then
-    echo "Docker could not be found. Installing Docker..."
-    sudo yum install -y docker
-    sudo service docker start
-    sudo usermod -a -G docker ec2-user
-fi
-
-# Install Docker Compose if not already installed
-if ! command -v docker-compose &> /dev/null
-then
-    echo "Docker Compose could not be found. Installing Docker Compose..."
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-fi
 
 # Install PostgreSQL if not already installed
 if ! command -v psql &> /dev/null

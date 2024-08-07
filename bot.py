@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import logging
-from flask import Flask
+from flask import Flask, jsonify
 from models import db, User, Referral
 import signal
 import time
@@ -11,7 +11,7 @@ import requests
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
-
+logger = logging.getLogger(__name__)
 # Load environment variables from .env file
 # load_dotenv(dotenv_path="/.env")
 
@@ -36,19 +36,28 @@ with app.app_context():
 
 def add_user(username, chat_id):
     with app.app_context():
-        user = User.query.filter_by(chat_id=str(chat_id)).first()
-        if not user:
-            referral_link = f"https://t.me/{bot.get_me().username}?start={chat_id}"
-            user = User(chat_id=str(chat_id), referral_link=referral_link)
-            db.session.add(user)
-            db.session.commit()
-        return user
+        try: 
+            user = User.query.filter_by(chat_id=str(chat_id)).first()
+            if not user:
+                referral_link = f"https://t.me/{bot.get_me().username}?start={chat_id}"
+                user = User(chat_id=str(chat_id), referral_link=referral_link)
+                db.session.add(user)
+                db.session.commit()
+            return user
+        except Exception as e:
+            logger.error(f"Error adding new user: {e}")
+            return jsonify({'message': 'Internal Server Error'}), 500
+            
 
 def add_referral(referrer_id, referred_chat_id):
     with app.app_context():
-        referral = Referral(user_id=referrer_id, referred_chat_id=str(referred_chat_id))
-        db.session.add(referral)
-        db.session.commit()
+        try:
+            referral = Referral(user_id=referrer_id, referred_chat_id=str(referred_chat_id))
+            db.session.add(referral)
+            db.session.commit()
+        except Exception as e:
+            logger.error(f"Error adding new referral: {e}")
+            return jsonify({'message': 'Internal Server Error'}), 500
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -66,15 +75,6 @@ def send_welcome(message):
                 add_referral(referrer.id, chat_id)
 
     bot.reply_to(message, f"Hi! Your data has been saved. Your referral link is {user.referral_link}")
-
-@bot.message_handler(commands=['points'])
-def get_points(message):
-    with app.app_context():
-        user = User.query.filter_by(chat_id=str(message.chat.id)).first()
-        if user:
-            bot.reply_to(message, f"You have {user.points} points.")
-        else:
-            bot.reply_to(message, "User not found.")
 
 @bot.message_handler(commands=['refer'])
 def refer_user(message):
